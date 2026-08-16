@@ -11,3 +11,7 @@ La importación histórica se ha contrastado contra el extracto recibido. **Caja
 La vista final de Cuentas presenta la temporada activa, las dos cajas de responsables, los vencimientos actuales y un histórico de movimientos filtrable por caja, temporada y tipo. Los filtros utilizan etiquetas explícitas de “Todas las cajas” y “Todas las temporadas” cuando no se restringe la consulta.
 
 La pantalla de Plantilla muestra la plantilla activa con 15 jugadores, controles de edición por ficha y el acceso administrativo a la exportación PDF. La edición concentra datos deportivos, federativos y el check de actividad para la temporada actual.
+
+## Resumen responsive
+
+La revisión del resumen con tarjetas vacías confirma una composición estable en escritorio y en un viewport móvil de 375 × 812 px. Las tarjetas **Siguiente partido** y **Próximo entrenamiento** conservan una altura mínima uniforme, texto centrado verticalmente y una separación visible respecto a las métricas inferiores; no se solapan ni se tocan entre filas.

@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, asc, desc, eq, gte, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { competitionStandings, competitions, eventAttendances, matches, seasons, teamEvents, users } from "../../drizzle/schema";
+import { competitionStandings, competitions, eventAttendances, matches, playerMatchStats, playerProfiles, seasons, teamEvents, users } from "../../drizzle/schema";
 import { requireDb } from "../db";
 import { adminProcedure, protectedProcedure, router } from "../_core/trpc";
 
@@ -35,6 +35,19 @@ const eventInput = z.object({
 type EventInput = z.infer<typeof eventInput>;
 
 type CompletedGame = { opponent: string; ownScore: number; opponentScore: number };
+const playerStatInput = z.object({ playerId: z.number().int().positive(), played: z.boolean().default(true), fouls: z.number().int().min(0).max(10).default(0), technicalFouls: z.number().int().min(0).max(5).default(0), unsportsmanlikeFouls: z.number().int().min(0).max(5).default(0) });
+
+export function calculatePlayerSeasonStats(rows: Array<{ played: boolean; fouls: number; technicalFouls: number; unsportsmanlikeFouls: number; ownScore: number | null; opponentScore: number | null; status: "scheduled" | "completed" | "postponed" | "cancelled" }>) {
+  return rows.reduce((summary, row) => {
+    if (!row.played) return summary;
+    summary.played += 1; summary.fouls += row.fouls; summary.technicalFouls += row.technicalFouls; summary.unsportsmanlikeFouls += row.unsportsmanlikeFouls;
+    if (row.status === "completed" && row.ownScore !== null && row.opponentScore !== null) {
+      if (row.ownScore > row.opponentScore) summary.won += 1;
+      else if (row.ownScore < row.opponentScore) summary.lost += 1;
+    }
+    return summary;
+  }, { played: 0, won: 0, lost: 0, fouls: 0, technicalFouls: 0, unsportsmanlikeFouls: 0 });
+}
 
 export function summarizeAttendance(responses: Array<{ status: "going" | "maybe" | "not_going"; userId: number }>, userId: number) {
   return { going: responses.filter(item => item.status === "going").length, maybe: responses.filter(item => item.status === "maybe").length, notGoing: responses.filter(item => item.status === "not_going").length, mine: responses.find(item => item.userId === userId)?.status ?? null };
@@ -46,6 +59,21 @@ export function selectNextActivities<T extends { event: { type: "training" | "ma
 
 export function buildEventValues(input: EventInput, userId: number) {
   return { ...input, seasonId: input.seasonId ?? null, competitionId: input.competitionId ?? null, endsAt: input.endsAt ?? null, callAt: input.callAt ?? null, location: input.location ?? null, description: input.description ?? null, attendanceEnabled: input.attendanceEnabled ?? input.type === "training", createdByUserId: userId };
+}
+
+export function buildWeeklyTrainingRows(input: { seasonId: number; seriesId: string; title: string; startsAt: Date; seasonEndsAt: Date; callAt?: Date | null; location?: string | null; description?: string | null; createdByUserId: number }) {
+  const rows: Array<{ seasonId: number; recurrenceSeriesId: string; type: "training"; title: string; startsAt: Date; callAt: Date | null; location: string | null; description: string | null; attendanceEnabled: boolean; createdByUserId: number }> = [];
+  const callOffset = input.callAt ? input.callAt.getTime() - input.startsAt.getTime() : null;
+  for (let current = new Date(input.startsAt); current <= input.seasonEndsAt; current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000)) {
+    rows.push({ seasonId: input.seasonId, recurrenceSeriesId: input.seriesId, type: "training", title: input.title, startsAt: new Date(current), callAt: callOffset === null ? null : new Date(current.getTime() + callOffset), location: input.location ?? null, description: input.description ?? null, attendanceEnabled: true, createdByUserId: input.createdByUserId });
+  }
+  return rows;
+}
+
+export function resolveTrainingDeletion(scope: "single" | "from_here" | "all_series", event: { id: number; startsAt: Date; recurrenceSeriesId: string | null }) {
+  if (scope === "single" || !event.recurrenceSeriesId) return { kind: "single" as const, eventId: event.id };
+  if (scope === "from_here") return { kind: "from_here" as const, seriesId: event.recurrenceSeriesId, startsAt: event.startsAt };
+  return { kind: "all_series" as const, seriesId: event.recurrenceSeriesId };
 }
 
 export function calculateStandings(games: CompletedGame[]) {
@@ -141,6 +169,29 @@ export const sportRouter = router({
     return { id: Number(result[0].insertId) };
   }),
 
+  createRecurringTraining: adminProcedure.input(z.object({ seasonId: z.number().int().positive(), title: z.string().trim().min(2).max(180).default("Entrenamiento"), startsAt: z.date(), callAt: z.date().nullable().optional(), location: z.string().trim().max(220).nullable().optional(), description: z.string().trim().max(4000).nullable().optional() })).mutation(async ({ ctx, input }) => {
+    const db = await requireDb();
+    const [season] = await db.select().from(seasons).where(eq(seasons.id, input.seasonId)).limit(1);
+    if (!season) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado la temporada seleccionada." });
+    if (input.startsAt > season.endsAt) throw new TRPCError({ code: "BAD_REQUEST", message: "El primer entrenamiento debe estar dentro de la temporada." });
+    const seriesId = crypto.randomUUID();
+    const rows = buildWeeklyTrainingRows({ ...input, seriesId, seasonEndsAt: season.endsAt, createdByUserId: ctx.user.id });
+    if (rows.length > 70) throw new TRPCError({ code: "BAD_REQUEST", message: "La serie supera el máximo de 70 entrenamientos." });
+    await db.insert(teamEvents).values(rows);
+    return { seriesId, created: rows.length };
+  }),
+
+  deleteTraining: adminProcedure.input(z.object({ eventId: z.number().int().positive(), scope: z.enum(["single", "from_here", "all_series"]) })).mutation(async ({ input }) => {
+    const db = await requireDb();
+    const [event] = await db.select().from(teamEvents).where(eq(teamEvents.id, input.eventId)).limit(1);
+    if (!event || event.type !== "training") throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el entrenamiento." });
+    const deletion = resolveTrainingDeletion(input.scope, event);
+    if (deletion.kind === "single") await db.delete(teamEvents).where(eq(teamEvents.id, deletion.eventId));
+    else if (deletion.kind === "from_here") await db.delete(teamEvents).where(and(eq(teamEvents.recurrenceSeriesId, deletion.seriesId), gte(teamEvents.startsAt, deletion.startsAt)));
+    else await db.delete(teamEvents).where(eq(teamEvents.recurrenceSeriesId, deletion.seriesId));
+    return { success: true };
+  }),
+
   matches: protectedProcedure.input(z.object({ competitionId: z.number().int().positive().optional() }).optional()).query(async ({ input }) => {
     const db = await requireDb();
     const statement = db
@@ -191,6 +242,26 @@ export const sportRouter = router({
     await db.update(matches).set({ ownScore: input.ownScore, opponentScore: input.opponentScore, notes: input.notes ?? null, status: "completed", updatedAt: new Date() }).where(eq(matches.id, input.id));
     if (match.competitionId) await syncStandings(match.competitionId);
     return { success: true };
+  }),
+
+  applyMatchReport: adminProcedure.input(z.object({ matchId: z.number().int().positive(), ownScore: z.number().int().min(0).max(300), opponentScore: z.number().int().min(0).max(300), sourceImportId: z.number().int().positive().nullable().optional(), notes: z.string().trim().max(4000).nullable().optional(), playerStats: z.array(playerStatInput).min(1).max(40) }).superRefine((value, ctx) => { if (new Set(value.playerStats.map(item => item.playerId)).size !== value.playerStats.length) ctx.addIssue({ code: "custom", message: "Un jugador solo puede aparecer una vez en el acta." }); })).mutation(async ({ ctx, input }) => {
+    const db = await requireDb();
+    const [match] = await db.select().from(matches).where(eq(matches.id, input.matchId)).limit(1);
+    if (!match) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el partido." });
+    const knownPlayers = await db.select({ id: playerProfiles.id }).from(playerProfiles).where(inArray(playerProfiles.id, input.playerStats.map(item => item.playerId)));
+    if (knownPlayers.length !== input.playerStats.length) throw new TRPCError({ code: "BAD_REQUEST", message: "El acta contiene un jugador no reconocido." });
+    await db.update(matches).set({ ownScore: input.ownScore, opponentScore: input.opponentScore, notes: input.notes ?? null, status: "completed", updatedAt: new Date() }).where(eq(matches.id, input.matchId));
+    await db.delete(playerMatchStats).where(eq(playerMatchStats.matchId, input.matchId));
+    await db.insert(playerMatchStats).values(input.playerStats.map(stat => ({ ...stat, matchId: input.matchId, sourceImportId: input.sourceImportId ?? null, confirmedByUserId: ctx.user.id })));
+    if (match.competitionId) await syncStandings(match.competitionId);
+    return { success: true, playersUpdated: input.playerStats.length };
+  }),
+
+  playerStatistics: protectedProcedure.input(z.object({ playerId: z.number().int().positive(), seasonId: z.number().int().positive().optional() })).query(async ({ input }) => {
+    const db = await requireDb();
+    const condition = input.seasonId ? and(eq(playerMatchStats.playerId, input.playerId), eq(teamEvents.seasonId, input.seasonId)) : eq(playerMatchStats.playerId, input.playerId);
+    const rows = await db.select({ stat: playerMatchStats, match: matches, event: teamEvents }).from(playerMatchStats).innerJoin(matches, eq(playerMatchStats.matchId, matches.id)).innerJoin(teamEvents, eq(matches.eventId, teamEvents.id)).where(condition).orderBy(desc(teamEvents.startsAt));
+    return { summary: calculatePlayerSeasonStats(rows.map(row => ({ ...row.stat, ownScore: row.match.ownScore, opponentScore: row.match.opponentScore, status: row.match.status }))), matches: rows };
   }),
 
   standings: protectedProcedure.input(z.object({ competitionId: z.number().int().positive() })).query(async ({ input }) => {

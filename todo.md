@@ -73,9 +73,46 @@
 - [x] Añadir prueba de respuesta individual de asistencia y sus permisos.
 - [x] Completar edición y ordenación visible de recursos compartidos desde la interfaz administrativa.
 - [x] Añadir pruebas de listado de recursos para miembros y de archivados según rol.
+- [x] Exigir jugador, cuota o cargo abierto y caja receptora al registrar un cobro administrativo de cuota.
+- [x] Preseleccionar el importe y concepto del cargo escogido, evitando pagos sin asignación de deuda.
+- [x] Confirmar que el cobro vinculado reduce el saldo del jugador y queda en su historial de pagos.
+- [x] Añadir pruebas de validación y aplicación de pago de cuota asociado a jugador.
+- [x] Mostrar comentarios opcionales en el historial de Cuentas y en los pagos del jugador cuando existan.
+- [x] Añadir una prueba que verifique la presentación del comentario guardado en un pago o cobro.
+- [x] Añadir comentario opcional a cobros y pagos, conservarlo en el historial y mostrarlo cuando exista.
+- [x] Ajustar alturas mínimas, huecos de cuadrícula y separación de filas en las tarjetas del resumen para evitar que se toquen.
+- [x] Verificar la composición del resumen en escritorio y móvil con tarjetas sin contenido.
+- [x] Verificar visualmente en móvil la separación y altura de las tarjetas de actividad vacías del resumen.
+- [x] Crear entrenamientos recurrentes semanales a la misma hora hasta el final de la temporada seleccionada.
+- [x] Permitir eliminar un entrenamiento individual, todas las sesiones desde una fecha o la serie completa.
+- [x] Mantener calendario, entrenamientos y asistencia sincronizados al crear o eliminar una recurrencia.
+- [x] Añadir pruebas de generación semanal y de los tres alcances de eliminación de sesiones.
+- [x] Eliminar de la interfaz el acceso mediante cuenta Manus y dejar únicamente el inicio local administrado.
+- [x] Crear el movimiento habitual Invitado Entreno con tipo ingreso e importe predeterminado de 3 €.
+- [x] Añadir pruebas de acceso local exclusivo y de la precarga del movimiento Invitado Entreno.
+- [x] Añadir prueba de componente que renderice comentarios de pago en el historial administrativo y del jugador.
+- [x] Añadir prueba de interacción que confirme la precarga de concepto, tipo e importe de 3 € al elegir Invitado Entreno.
+- [ ] Añadir prueba integrada del historial administrativo y de la vista de jugador con comentarios de pago reales.
+- [ ] Añadir prueba integrada de la pantalla de Cuentas que seleccione Invitado Entreno y verifique los campos precargados visibles.
+- [x] Añadir comentario opcional al registro de todo movimiento habitual y conservarlo en el historial de caja.
+- [x] Etiquetar los comentarios de arbitraje e Invitado Entreno para orientar al administrador sobre rival o persona invitada.
+- [x] Hacer visible y obligatorio el selector de jugador dentro del formulario Registrar cobro antes de elegir su cuota.
+- [x] Añadir pruebas de comentario en movimientos habituales y de selección obligatoria de jugador en cobros.
+- [x] Añadir prueba de rechazo del cobro administrativo cuando falte jugador, cuota o caja.
+- [x] Añadir prueba de integración del formulario Registrar cobro que no permita continuar sin elegir jugador.
+- [ ] Añadir prueba integrada de FinancesPage en modo Registrar cobro con selects reales y botón bloqueado o habilitado según las selecciones.
 - [x] Añadir prueba de restricción de asistencia cuando una actividad no admite respuesta.
 - [x] Añadir prueba del router de próximo partido con rival, fecha, lugar y hora de convocatoria.
 - [x] Añadir prueba de creación de entrenamiento y presencia en la consulta compartida de Calendario.
 - [x] Añadir prueba de respuesta individual de asistencia y sus permisos.
 - [x] Completar edición y ordenación visible de recursos compartidos desde la interfaz administrativa.
 - [x] Añadir pruebas de listado de recursos para miembros y de archivados según rol.
+- [x] Crear estadísticas por jugador y partido: participación, victoria, derrota, faltas, técnicas y antideportivas.
+- [x] Añadir resumen acumulado por jugador de partidos jugados, ganados, perdidos y sanciones.
+- [x] Permitir subir un acta de partido y extraer un borrador estructurado de resultado y estadísticas individuales.
+- [x] Requerir revisión y confirmación administrativa antes de aplicar un acta al resultado y a las fichas.
+- [x] Mostrar en cada ficha el historial de partidos y estadísticas de la temporada seleccionada.
+- [x] Añadir pruebas de cálculo estadístico, confirmación de acta y prevención de duplicados.
+- [x] Añadir selector de temporada en la ficha de jugador y filtrar el historial estadístico con `seasonId`.
+- [x] Añadir prueba de confirmación exitosa de acta que actualice marcador, participación y sanciones por jugador.
+- [x] Ampliar la prueba de acta confirmada para comprobar `played`, faltas, técnicas y antideportivas persistidas por jugador.

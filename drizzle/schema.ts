@@ -293,6 +293,7 @@ export const teamEvents = mysqlTable(
     callAt: timestamp("callAt"),
     location: varchar("location", { length: 220 }),
     description: text("description"),
+    recurrenceSeriesId: varchar("recurrenceSeriesId", { length: 64 }),
     attendanceEnabled: boolean("attendanceEnabled").default(false).notNull(),
     createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -301,6 +302,7 @@ export const teamEvents = mysqlTable(
   table => ({
     eventStartIndex: index("event_start_index").on(table.startsAt),
     eventSeasonIndex: index("event_season_index").on(table.seasonId),
+    eventSeriesIndex: index("event_series_index").on(table.recurrenceSeriesId, table.startsAt),
   })
 );
 
@@ -342,6 +344,28 @@ export const matches = mysqlTable(
   table => ({
     matchEventUnique: uniqueIndex("match_event_unique").on(table.eventId),
     matchCompetitionIndex: index("match_competition_index").on(table.competitionId),
+  })
+);
+
+/** Official player participation and disciplinary data, one row per player and match. */
+export const playerMatchStats = mysqlTable(
+  "playerMatchStats",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    matchId: int("matchId").notNull().references(() => matches.id, { onDelete: "cascade" }),
+    playerId: int("playerId").notNull().references(() => playerProfiles.id, { onDelete: "cascade" }),
+    played: boolean("played").default(true).notNull(),
+    fouls: int("fouls").default(0).notNull(),
+    technicalFouls: int("technicalFouls").default(0).notNull(),
+    unsportsmanlikeFouls: int("unsportsmanlikeFouls").default(0).notNull(),
+    sourceImportId: int("sourceImportId").references(() => importJobs.id, { onDelete: "set null" }),
+    confirmedByUserId: int("confirmedByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    matchPlayerUnique: uniqueIndex("match_player_stat_unique").on(table.matchId, table.playerId),
+    playerMatchStatIndex: index("player_match_stat_player_index").on(table.playerId),
   })
 );
 

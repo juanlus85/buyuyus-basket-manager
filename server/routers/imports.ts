@@ -33,6 +33,43 @@ const extractionSchema = {
   additionalProperties: false,
 } as const;
 
+const matchReportExtractionSchema = {
+  type: "object",
+  properties: {
+    documentSummary: { type: "string" },
+    match: {
+      type: "object",
+      properties: {
+        opponent: { type: ["string", "null"] },
+        ownScore: { type: ["integer", "null"] },
+        opponentScore: { type: ["integer", "null"] },
+      },
+      required: ["opponent", "ownScore", "opponentScore"],
+      additionalProperties: false,
+    },
+    playerStats: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          playerName: { type: "string" },
+          jerseyNumber: { type: ["integer", "null"] },
+          played: { type: "boolean" },
+          fouls: { type: "integer", minimum: 0, maximum: 10 },
+          technicalFouls: { type: "integer", minimum: 0, maximum: 5 },
+          unsportsmanlikeFouls: { type: "integer", minimum: 0, maximum: 5 },
+          confidence: { type: "integer", minimum: 0, maximum: 100 },
+        },
+        required: ["playerName", "jerseyNumber", "played", "fouls", "technicalFouls", "unsportsmanlikeFouls", "confidence"],
+        additionalProperties: false,
+      },
+    },
+    warnings: { type: "array", items: { type: "string" } },
+  },
+  required: ["documentSummary", "match", "playerStats", "warnings"],
+  additionalProperties: false,
+} as const;
+
 function safeFilename(filename: string) {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 150) || "document";
 }
@@ -86,10 +123,10 @@ export const importRouter = router({
             },
             {
               role: "user",
-              content: [{ type: "text", text: `Analiza este documento para el destino ${input.type}. Extrae los posibles eventos, partidos, filas de clasificación o movimientos financieros. No guardes nada automáticamente: la respuesta será un borrador de revisión.` }, ...source],
+              content: [{ type: "text", text: input.type === "match_report" ? "Analiza este acta de baloncesto. Extrae solo el rival, marcador de Buyuyus, marcador rival y, por cada jugador realmente identificable, participación, faltas, técnicas y antideportivas. No inventes nombres ni cifras: usa null o warnings si algo no es legible. El resultado será un borrador para que administración lo asocie al partido y lo confirme." : `Analiza este documento para el destino ${input.type}. Extrae los posibles eventos, partidos, filas de clasificación o movimientos financieros. No guardes nada automáticamente: la respuesta será un borrador de revisión.` }, ...source],
             },
           ],
-          response_format: { type: "json_schema", json_schema: { name: "team_document_extraction", strict: true, schema: extractionSchema } },
+          response_format: { type: "json_schema", json_schema: { name: input.type === "match_report" ? "basketball_match_report" : "team_document_extraction", strict: true, schema: input.type === "match_report" ? matchReportExtractionSchema : extractionSchema } },
         });
         const content = response.choices[0]?.message?.content;
         if (typeof content !== "string") {

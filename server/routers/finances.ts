@@ -9,6 +9,7 @@ import { adminProcedure, protectedProcedure, router } from "../_core/trpc";
 const moneyCents = z.number().int().positive().max(10_000_000);
 const optionalId = z.number().int().positive().nullable().optional();
 const paymentMethod = z.enum(["cash", "bank_transfer", "bizum", "paypal"]);
+export const guestTrainingPreset = { name: "Invitado Entreno", direction: "income" as const, defaultConcept: "Invitado Entreno", defaultAmountCents: 300, notes: "Ingreso por invitado en entrenamiento" };
 
 export function calculateStatement(charges: Array<{ amountCents: number; status: "open" | "cancelled" | "settled" }>, payments: Array<{ amountCents: number; status: "pending" | "confirmed" | "rejected" }>) {
   const chargedCents = charges.filter(charge => charge.status !== "cancelled").reduce((sum, charge) => sum + charge.amountCents, 0);
@@ -19,6 +20,14 @@ export function calculateStatement(charges: Array<{ amountCents: number; status:
 
 export function calculateAccountBalance(openingBalanceCents: number, transactions: Array<{ direction: "income" | "expense"; amountCents: number }>, payments: Array<{ amountCents: number; status: "pending" | "confirmed" | "rejected" }>) {
   return openingBalanceCents + transactions.reduce((sum, row) => sum + (row.direction === "income" ? row.amountCents : -row.amountCents), 0) + payments.filter(row => row.status === "confirmed").reduce((sum, row) => sum + row.amountCents, 0);
+}
+
+export function calculateOutstandingCents(chargeAmountCents: number, confirmedPayments: Array<{ amountCents: number; status: "pending" | "confirmed" | "rejected" }>) {
+  return Math.max(0, chargeAmountCents - confirmedPayments.filter(payment => payment.status === "confirmed").reduce((sum, payment) => sum + payment.amountCents, 0));
+}
+
+export function paymentComment(adminNote: string | null, playerNote: string | null) {
+  return adminNote || playerNote || null;
 }
 
 export function buildDueChargeRows(input: { now: Date; players: Array<{ id: number; status: "active" | "inactive"; isActiveCurrentSeason: boolean }>; installments: Array<{ id: number; dueAt: Date; amountCents: number; plan: { seasonId: number; concept: string; createdByUserId: number | null } }>; existingKeys: Set<string> }) {
@@ -37,6 +46,16 @@ async function getActiveSeasonId() {
   const db = await requireDb();
   const [season] = await db.select({ id: seasons.id }).from(seasons).where(eq(seasons.isCurrent, true)).limit(1);
   return season?.id ?? null;
+}
+
+async function ensureGuestTrainingTemplate() {
+  const db = await requireDb();
+  const [existing] = await db.select({ id: financeTemplates.id }).from(financeTemplates).where(and(eq(financeTemplates.name, guestTrainingPreset.name), eq(financeTemplates.direction, guestTrainingPreset.direction))).limit(1);
+  if (existing) return existing.id;
+  const [category] = await db.select({ id: teamFinancialCategories.id }).from(teamFinancialCategories).where(and(eq(teamFinancialCategories.name, guestTrainingPreset.name), eq(teamFinancialCategories.direction, guestTrainingPreset.direction))).limit(1);
+  const categoryId = category?.id ?? Number((await db.insert(teamFinancialCategories).values({ name: guestTrainingPreset.name, direction: guestTrainingPreset.direction, defaultAmountCents: guestTrainingPreset.defaultAmountCents }))[0].insertId);
+  const result = await db.insert(financeTemplates).values({ ...guestTrainingPreset, categoryId });
+  return Number(result[0].insertId);
 }
 
 async function materializeDueCharges() {
@@ -107,18 +126,24 @@ export const financeRouter = router({
     return { success: true };
   }),
 
-  recordAdminPayment: adminProcedure.input(z.object({ playerId: z.number().int().positive(), chargeId: optionalId, seasonId: optionalId, accountId: optionalId, amountCents: moneyCents, paidAt: z.date(), method: paymentMethod, concept: z.string().trim().max(180).nullable().optional(), adminNote: z.string().trim().max(2000).nullable().optional() })).mutation(async ({ ctx, input }) => {
+  recordAdminPayment: adminProcedure.input(z.object({ playerId: z.number().int().positive(), chargeId: z.number().int().positive(), accountId: z.number().int().positive(), amountCents: moneyCents, paidAt: z.date(), method: paymentMethod, adminNote: z.string().trim().max(2000).nullable().optional() })).mutation(async ({ ctx, input }) => {
     const db = await requireDb();
     const [player] = await db.select().from(playerProfiles).where(eq(playerProfiles.id, input.playerId)).limit(1);
     if (!player) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el jugador." });
-    const [charge] = input.chargeId ? await db.select().from(playerCharges).where(eq(playerCharges.id, input.chargeId)).limit(1) : [null];
-    const result = await db.insert(playerPayments).values({ ...input, chargeId: input.chargeId ?? null, seasonId: input.seasonId ?? charge?.seasonId ?? await getActiveSeasonId(), accountId: input.accountId ?? null, concept: input.concept ?? charge?.concept ?? null, adminNote: input.adminNote ?? null, status: "confirmed", submittedByUserId: ctx.user.id, reviewedByUserId: ctx.user.id, reviewedAt: new Date() });
-    if (input.chargeId) await settleCharge(input.chargeId);
+    if (player.status !== "active" || !player.isActiveCurrentSeason) throw new TRPCError({ code: "BAD_REQUEST", message: "El jugador no está activo en la temporada actual." });
+    const [charge] = await db.select().from(playerCharges).where(and(eq(playerCharges.id, input.chargeId), eq(playerCharges.playerId, input.playerId), eq(playerCharges.status, "open"))).limit(1);
+    if (!charge) throw new TRPCError({ code: "BAD_REQUEST", message: "Selecciona un cargo abierto que corresponda al jugador." });
+    const payments = await db.select().from(playerPayments).where(and(eq(playerPayments.chargeId, charge.id), eq(playerPayments.status, "confirmed")));
+    const outstandingCents = calculateOutstandingCents(charge.amountCents, payments);
+    if (!outstandingCents || input.amountCents > outstandingCents) throw new TRPCError({ code: "BAD_REQUEST", message: "El importe no puede superar la deuda pendiente de la cuota." });
+    const result = await db.insert(playerPayments).values({ playerId: input.playerId, chargeId: charge.id, seasonId: charge.seasonId, accountId: input.accountId, amountCents: input.amountCents, paidAt: input.paidAt, method: input.method, concept: charge.concept, adminNote: input.adminNote ?? null, status: "confirmed", submittedByUserId: ctx.user.id, reviewedByUserId: ctx.user.id, reviewedAt: new Date() });
+    await settleCharge(charge.id);
     return { id: Number(result[0].insertId), status: "confirmed" as const };
   }),
 
   ledger: adminProcedure.query(async () => {
     await materializeDueCharges();
+    await ensureGuestTrainingTemplate();
     const db = await requireDb();
     const currentSeasonId = await getActiveSeasonId();
     const [transactions, charges, payments, categories, accounts, templates, plans, installments] = await Promise.all([
@@ -149,7 +174,7 @@ export const financeRouter = router({
     const direction = input?.direction ?? "all";
     const entries = [
       ...transactions.map(row => ({ id: `transaction-${row.id}`, source: "movement" as const, accountId: row.accountId, seasonId: row.seasonId, direction: row.direction, amountCents: row.amountCents, concept: row.concept, occurredAt: row.occurredAt, notes: row.notes, transferKey: row.transferKey, playerName: null })),
-      ...confirmedPayments.map(({ payment, playerName }) => ({ id: `payment-${payment.id}`, source: "payment" as const, accountId: payment.accountId, seasonId: payment.seasonId, direction: "income" as const, amountCents: payment.amountCents, concept: payment.concept ?? "Pago de jugador", occurredAt: payment.paidAt, notes: payment.adminNote ?? payment.playerNote, transferKey: null, playerName })),
+      ...confirmedPayments.map(({ payment, playerName }) => ({ id: `payment-${payment.id}`, source: "payment" as const, accountId: payment.accountId, seasonId: payment.seasonId, direction: "income" as const, amountCents: payment.amountCents, concept: payment.concept ?? "Pago de jugador", occurredAt: payment.paidAt, notes: paymentComment(payment.adminNote, payment.playerNote), transferKey: null, playerName })),
     ].filter(entry => (accountId ? entry.accountId === accountId : true) && (seasonId ? entry.seasonId === seasonId : true) && (direction === "all" ? true : entry.direction === direction)).sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime());
     return entries;
   }),

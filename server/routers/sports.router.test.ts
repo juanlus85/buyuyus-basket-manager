@@ -53,4 +53,31 @@ describe("sports router agenda", () => {
     await expect(appRouter.createCaller(player).sports.respondAttendance({ eventId: 78, status: "going" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(insert).not.toHaveBeenCalled();
   });
+
+  it("rechaza un acta con el mismo jugador duplicado para prevenir estadísticas repetidas", async () => {
+    await expect(appRouter.createCaller(admin).sports.applyMatchReport({ matchId: 12, ownScore: 63, opponentScore: 57, playerStats: [
+      { playerId: 3, played: true, fouls: 2, technicalFouls: 0, unsportsmanlikeFouls: 0 },
+      { playerId: 3, played: true, fouls: 1, technicalFouls: 0, unsportsmanlikeFouls: 0 },
+    ] })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("confirma un acta actualizando marcador y estadísticas individuales", async () => {
+    const updateSet = vi.fn().mockReturnValue({ where: async () => undefined });
+    const deleteWhere = vi.fn().mockResolvedValue(undefined);
+    const statValues = vi.fn().mockResolvedValue(undefined);
+    const matchQuery = { from: () => ({ where: () => ({ limit: async () => [{ id: 22, competitionId: null }] }) }) };
+    const playerQuery = { from: () => ({ where: async () => [{ id: 3 }] }) };
+    vi.mocked(requireDb).mockResolvedValue({
+      select: vi.fn().mockReturnValueOnce(matchQuery).mockReturnValueOnce(playerQuery),
+      update: vi.fn().mockReturnValue({ set: updateSet }),
+      delete: vi.fn().mockReturnValue({ where: deleteWhere }),
+      insert: vi.fn().mockReturnValue({ values: statValues }),
+    } as never);
+
+    const result = await appRouter.createCaller(admin).sports.applyMatchReport({ matchId: 22, ownScore: 68, opponentScore: 55, notes: "Acta revisada", playerStats: [{ playerId: 3, played: true, fouls: 3, technicalFouls: 1, unsportsmanlikeFouls: 0 }] });
+    expect(result).toEqual({ success: true, playersUpdated: 1 });
+    expect(updateSet).toHaveBeenCalledWith(expect.objectContaining({ ownScore: 68, opponentScore: 55, status: "completed" }));
+    expect(deleteWhere).toHaveBeenCalled();
+    expect(statValues).toHaveBeenCalledWith([expect.objectContaining({ matchId: 22, playerId: 3, played: true, fouls: 3, technicalFouls: 1, unsportsmanlikeFouls: 0, confirmedByUserId: 8 })]);
+  });
 });

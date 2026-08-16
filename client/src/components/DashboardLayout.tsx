@@ -19,7 +19,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 import { Bell, BookOpen, CalendarDays, ChartNoAxesCombined, CircleDollarSign, CloudUpload, Dumbbell, LayoutDashboard, LogOut, PanelLeft, Settings, Trophy, Users } from "lucide-react";
@@ -86,8 +85,6 @@ export default function DashboardLayout({
             </p>
           </div>
           <form onSubmit={submitLocalLogin} className="w-full space-y-3 rounded-2xl border border-border bg-card p-5 shadow-sm"><Input value={localUsername} onChange={event => setLocalUsername(event.target.value)} placeholder="Usuario" autoComplete="username" className="rounded-xl" required /><Input value={localPassword} onChange={event => setLocalPassword(event.target.value)} placeholder="Contraseña" type="password" autoComplete="current-password" className="rounded-xl" required /><Button type="submit" disabled={localLogin.isPending} size="lg" className="w-full shadow-lg hover:shadow-xl transition-all">{localLogin.isPending ? "Comprobando…" : "Iniciar sesión"}</Button>{localLogin.error ? <p className="text-center text-xs text-rose-700">{localLogin.error.message}</p> : null}</form>
-          <div className="flex w-full items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />o<span className="h-px flex-1 bg-border" /></div>
-          <Button onClick={() => startLogin()} variant="outline" size="lg" className="w-full">Acceso con cuenta Manus</Button>
         </div>
       </div>
     );
