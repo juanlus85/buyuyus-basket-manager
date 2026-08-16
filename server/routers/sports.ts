@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { competitionStandings, competitions, matches, seasons, teamEvents } from "../../drizzle/schema";
+import { competitionStandings, competitions, eventAttendances, matches, seasons, teamEvents, users } from "../../drizzle/schema";
 import { requireDb } from "../db";
 import { adminProcedure, protectedProcedure, router } from "../_core/trpc";
 
@@ -27,11 +27,26 @@ const eventInput = z.object({
   title: z.string().trim().min(2).max(180),
   startsAt: z.date(),
   endsAt: z.date().nullable().optional(),
+  callAt: z.date().nullable().optional(),
   location: z.string().trim().max(220).nullable().optional(),
   description: z.string().trim().max(4000).nullable().optional(),
+  attendanceEnabled: z.boolean().optional(),
 });
+type EventInput = z.infer<typeof eventInput>;
 
 type CompletedGame = { opponent: string; ownScore: number; opponentScore: number };
+
+export function summarizeAttendance(responses: Array<{ status: "going" | "maybe" | "not_going"; userId: number }>, userId: number) {
+  return { going: responses.filter(item => item.status === "going").length, maybe: responses.filter(item => item.status === "maybe").length, notGoing: responses.filter(item => item.status === "not_going").length, mine: responses.find(item => item.userId === userId)?.status ?? null };
+}
+
+export function selectNextActivities<T extends { event: { type: "training" | "match" | "general" } }>(rows: T[]) {
+  return { nextMatch: rows.find(row => row.event.type === "match") ?? null, nextTraining: rows.find(row => row.event.type === "training") ?? null };
+}
+
+export function buildEventValues(input: EventInput, userId: number) {
+  return { ...input, seasonId: input.seasonId ?? null, competitionId: input.competitionId ?? null, endsAt: input.endsAt ?? null, callAt: input.callAt ?? null, location: input.location ?? null, description: input.description ?? null, attendanceEnabled: input.attendanceEnabled ?? input.type === "training", createdByUserId: userId };
+}
 
 export function calculateStandings(games: CompletedGame[]) {
   const table = new Map<string, { teamName: string; played: number; won: number; drawn: number; lost: number; forfeits: number; pointsFor: number; pointsAgainst: number; points: number }>();
@@ -101,7 +116,7 @@ export const sportRouter = router({
     return { id: Number(result[0].insertId) };
   }),
 
-  events: protectedProcedure.input(z.object({ seasonId: z.number().int().positive().optional(), limit: z.number().int().min(1).max(250).default(100) }).optional()).query(async ({ input }) => {
+  events: protectedProcedure.input(z.object({ seasonId: z.number().int().positive().optional(), limit: z.number().int().min(1).max(250).default(100) }).optional()).query(async ({ ctx, input }) => {
     const db = await requireDb();
     const statement = db
       .select({ event: teamEvents, competitionName: competitions.name, seasonName: seasons.name })
@@ -110,12 +125,19 @@ export const sportRouter = router({
       .leftJoin(seasons, eq(teamEvents.seasonId, seasons.id))
       .orderBy(asc(teamEvents.startsAt))
       .limit(input?.limit ?? 100);
-    return input?.seasonId ? statement.where(eq(teamEvents.seasonId, input.seasonId)) : statement;
+    const rows = await (input?.seasonId ? statement.where(eq(teamEvents.seasonId, input.seasonId)) : statement);
+    const ids = rows.map(row => row.event.id);
+    if (!ids.length) return rows.map(row => ({ ...row, attendance: { going: 0, maybe: 0, notGoing: 0, mine: null as "going" | "maybe" | "not_going" | null } }));
+    const responses = await db.select({ eventId: eventAttendances.eventId, status: eventAttendances.status, userId: eventAttendances.userId }).from(eventAttendances).where(inArray(eventAttendances.eventId, ids));
+    return rows.map(row => {
+      const current = responses.filter(response => response.eventId === row.event.id);
+      return { ...row, attendance: summarizeAttendance(current, ctx.user.id) };
+    });
   }),
 
   createEvent: adminProcedure.input(eventInput).mutation(async ({ ctx, input }) => {
     const db = await requireDb();
-    const result = await db.insert(teamEvents).values({ ...input, seasonId: input.seasonId ?? null, competitionId: input.competitionId ?? null, endsAt: input.endsAt ?? null, location: input.location ?? null, description: input.description ?? null, createdByUserId: ctx.user.id });
+    const result = await db.insert(teamEvents).values(buildEventValues(input, ctx.user.id));
     return { id: Number(result[0].insertId) };
   }),
 
@@ -142,8 +164,10 @@ export const sportRouter = router({
         title: input.title,
         startsAt: input.startsAt,
         endsAt: input.endsAt ?? null,
+        callAt: input.callAt ?? null,
         location: input.location ?? null,
         description: input.description ?? null,
+        attendanceEnabled: input.attendanceEnabled ?? false,
         createdByUserId: ctx.user.id,
       });
       const result = await db.insert(matches).values({
@@ -172,6 +196,27 @@ export const sportRouter = router({
   standings: protectedProcedure.input(z.object({ competitionId: z.number().int().positive() })).query(async ({ input }) => {
     const db = await requireDb();
     return db.select().from(competitionStandings).where(eq(competitionStandings.competitionId, input.competitionId)).orderBy(asc(competitionStandings.position), desc(competitionStandings.points), desc(competitionStandings.pointsFor));
+  }),
+
+  respondAttendance: protectedProcedure.input(z.object({ eventId: z.number().int().positive(), status: z.enum(["going", "not_going", "maybe"]), note: z.string().trim().max(400).nullable().optional() })).mutation(async ({ ctx, input }) => {
+    const db = await requireDb();
+    const [event] = await db.select({ id: teamEvents.id, attendanceEnabled: teamEvents.attendanceEnabled }).from(teamEvents).where(eq(teamEvents.id, input.eventId)).limit(1);
+    if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado la actividad." });
+    if (!event.attendanceEnabled) throw new TRPCError({ code: "BAD_REQUEST", message: "Esta actividad no requiere confirmación de asistencia." });
+    await db.insert(eventAttendances).values({ eventId: input.eventId, userId: ctx.user.id, status: input.status, note: input.note ?? null, respondedAt: new Date() }).onDuplicateKeyUpdate({ set: { status: input.status, note: input.note ?? null, respondedAt: new Date(), updatedAt: new Date() } });
+    return { success: true };
+  }),
+
+  nextSummary: protectedProcedure.query(async ({ ctx }) => {
+    const db = await requireDb(); const now = new Date();
+    const upcoming = await db.select({ event: teamEvents, match: matches, competitionName: competitions.name }).from(teamEvents).leftJoin(matches, eq(matches.eventId, teamEvents.id)).leftJoin(competitions, eq(matches.competitionId, competitions.id)).where(gte(teamEvents.startsAt, now)).orderBy(asc(teamEvents.startsAt)).limit(30);
+    const enrich = async (row: typeof upcoming[number] | null | undefined) => {
+      if (!row) return null;
+      const responses = await db.select({ status: eventAttendances.status, userId: eventAttendances.userId }).from(eventAttendances).where(eq(eventAttendances.eventId, row.event.id));
+      return { ...row, attendance: summarizeAttendance(responses, ctx.user.id) };
+    };
+    const selected = selectNextActivities(upcoming);
+    return { nextMatch: await enrich(selected.nextMatch), nextTraining: await enrich(selected.nextTraining) };
   }),
 
   upsertStanding: adminProcedure

@@ -51,3 +51,31 @@
 - [x] Añadir prueba de filtro de plantilla que excluya jugadores no activos en la temporada actual.
 - [x] Añadir prueba de creación y edición de fecha de nacimiento, DNI y talla de camiseta.
 - [x] Verificar mediante el router que create y update conservan los campos federativos de la ficha.
+- [x] Implementar creación administrativa de usuarios con usuario, contraseña segura y correo de bienvenida por SMTP.
+- [x] Solicitar y validar la configuración SMTP necesaria para enviar las credenciales de acceso.
+- [x] Simplificar el alta de ingresos y gastos con formularios orientados a conceptos habituales y contabilidad consistente.
+- [x] Cargar partidos, resultados y clasificación documentados de la temporada 2025–2026.
+- [x] Crear y preparar la temporada 2027 sin mezclar datos con los cursos anteriores.
+- [x] Mostrar en el resumen la información completa del próximo partido: rival, fecha, hora, lugar y hora de convocatoria.
+- [x] Crear el módulo de entrenamientos con fecha, hora, lugar, sincronización de calendario y asistencia individual.
+- [x] Mostrar próximos entrenamientos y respuestas de asistencia en el resumen del equipo.
+- [x] Añadir pruebas de autorización, asistencia, alta de usuario, próximo partido y sincronización de calendario.
+- [x] Añadir prueba del resumen de próximo partido con rival, fecha, lugar y hora de convocatoria.
+- [x] Añadir prueba de creación de entrenamiento y presencia en la consulta compartida de Calendario.
+- [x] Añadir prueba de autorización para altas locales, programación de actividades y respuesta individual de asistencia.
+- [x] Crear una biblioteca visible para todos los miembros con documentos, normas, calendarios y enlaces de interés.
+- [x] Permitir a administración publicar, editar, archivar y ordenar recursos compartidos por categoría.
+- [x] Implementar almacenamiento seguro de documentos y registro de URLs con título, descripción y categoría.
+- [x] Añadir una pantalla de recursos comunes responsive y accesible desde la navegación del equipo.
+- [x] Añadir pruebas de permisos y visibilidad para recursos compartidos.
+- [x] Añadir prueba del router de próximo partido con rival, fecha, lugar y hora de convocatoria.
+- [x] Añadir prueba de creación de entrenamiento y presencia en la consulta compartida de Calendario.
+- [x] Añadir prueba de respuesta individual de asistencia y sus permisos.
+- [x] Completar edición y ordenación visible de recursos compartidos desde la interfaz administrativa.
+- [x] Añadir pruebas de listado de recursos para miembros y de archivados según rol.
+- [x] Añadir prueba de restricción de asistencia cuando una actividad no admite respuesta.
+- [x] Añadir prueba del router de próximo partido con rival, fecha, lugar y hora de convocatoria.
+- [x] Añadir prueba de creación de entrenamiento y presencia en la consulta compartida de Calendario.
+- [x] Añadir prueba de respuesta individual de asistencia y sus permisos.
+- [x] Completar edición y ordenación visible de recursos compartidos desde la interfaz administrativa.
+- [x] Añadir pruebas de listado de recursos para miembros y de archivados según rol.

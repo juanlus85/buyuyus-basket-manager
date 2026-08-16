@@ -145,6 +145,7 @@ export const userManagementRouter = router({
         id: users.id,
         name: users.name,
         email: users.email,
+        username: users.username,
         role: users.role,
         isActive: users.isActive,
         lastSignedIn: users.lastSignedIn,

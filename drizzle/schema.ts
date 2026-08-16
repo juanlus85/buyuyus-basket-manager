@@ -20,6 +20,9 @@ export const users = mysqlTable("users", {
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
+  username: varchar("username", { length: 80 }).unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }),
+  mustChangePassword: boolean("mustChangePassword").default(false).notNull(),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   isActive: boolean("isActive").default(true).notNull(),
@@ -287,8 +290,10 @@ export const teamEvents = mysqlTable(
     title: varchar("title", { length: 180 }).notNull(),
     startsAt: timestamp("startsAt").notNull(),
     endsAt: timestamp("endsAt"),
+    callAt: timestamp("callAt"),
     location: varchar("location", { length: 220 }),
     description: text("description"),
+    attendanceEnabled: boolean("attendanceEnabled").default(false).notNull(),
     createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -296,6 +301,26 @@ export const teamEvents = mysqlTable(
   table => ({
     eventStartIndex: index("event_start_index").on(table.startsAt),
     eventSeasonIndex: index("event_season_index").on(table.seasonId),
+  })
+);
+
+/** Individual attendance responses for trainings, matches and events. */
+export const eventAttendances = mysqlTable(
+  "eventAttendances",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    eventId: int("eventId").notNull().references(() => teamEvents.id, { onDelete: "cascade" }),
+    userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+    status: mysqlEnum("status", ["going", "not_going", "maybe"]).notNull(),
+    note: varchar("note", { length: 400 }),
+    respondedAt: timestamp("respondedAt").defaultNow().notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    attendanceEventIndex: index("attendance_event_index").on(table.eventId),
+    attendanceUserIndex: index("attendance_user_index").on(table.userId),
+    attendanceEventUserUnique: uniqueIndex("attendance_event_user_unique").on(table.eventId, table.userId),
   })
 );
 
@@ -355,6 +380,33 @@ export const teamAnnouncements = mysqlTable(
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   },
   table => ({ announcementPublishedIndex: index("announcement_published_index").on(table.publishedAt) })
+);
+
+/** Documents and links intentionally shared with every authenticated team member. */
+export const sharedResources = mysqlTable(
+  "sharedResources",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    title: varchar("title", { length: 180 }).notNull(),
+    description: text("description"),
+    category: mysqlEnum("category", ["calendar", "rules", "document", "link", "other"]).default("document").notNull(),
+    kind: mysqlEnum("kind", ["document", "link"]).notNull(),
+    externalUrl: varchar("externalUrl", { length: 2048 }),
+    fileName: varchar("fileName", { length: 255 }),
+    fileKey: varchar("fileKey", { length: 512 }),
+    fileUrl: varchar("fileUrl", { length: 1024 }),
+    mimeType: varchar("mimeType", { length: 160 }),
+    sortOrder: int("sortOrder").default(0).notNull(),
+    isPinned: boolean("isPinned").default(false).notNull(),
+    isArchived: boolean("isArchived").default(false).notNull(),
+    createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    resourceVisibilityIndex: index("resource_visibility_index").on(table.isArchived, table.category),
+    resourceSortIndex: index("resource_sort_index").on(table.sortOrder),
+  })
 );
 
 /** Stored input and extraction result. Data is always reviewed before it creates records. */

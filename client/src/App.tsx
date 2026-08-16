@@ -12,6 +12,8 @@ import NotFound from "@/pages/NotFound";
 import PlayersPage from "@/pages/PlayersPage";
 import SportsPage from "@/pages/SportsPage";
 import TeamPage from "@/pages/TeamPage";
+import TrainingPage from "@/pages/TrainingPage";
+import ResourcesPage from "@/pages/ResourcesPage";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -26,6 +28,8 @@ function Router() {
         <Route path={"/jugadores"} component={PlayersPage} />
         <Route path={"/cuentas"} component={FinancesPage} />
         <Route path={"/calendario"} component={CalendarPage} />
+        <Route path={"/entrenamientos"} component={TrainingPage} />
+        <Route path={"/recursos"} component={ResourcesPage} />
         <Route path={"/competicion"} component={SportsPage} />
         <Route path={"/equipo"} component={TeamPage} />
         <Route path={"/importar"} component={ImportPage} />

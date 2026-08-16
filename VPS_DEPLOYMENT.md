@@ -27,6 +27,18 @@ chmod 600 .env
 
 El valor de `JWT_SECRET` debe generarse de forma aleatoria y mantenerse privado. Para la conexión MySQL, emplee una URL con el formato `mysql://usuario:contraseña@127.0.0.1:3306/buyuyus_basket`.
 
+Para el alta directa de usuarios por correo, configure también las variables SMTP siguientes. La aplicación comprueba la conectividad SMTP antes de habilitar el envío de credenciales.
+
+| Variable | Finalidad |
+|---|---|
+| `SMTP_HOST` | Nombre del servidor SMTP del remitente. |
+| `SMTP_PORT` | Puerto SMTP; normalmente `465` para SSL o `587` para STARTTLS. |
+| `SMTP_USER` | Cuenta autenticada para el envío. |
+| `SMTP_PASS` | Contraseña o contraseña de aplicación del remitente. |
+| `SMTP_FROM` | Remitente visible, por ejemplo `Buyuyus Basket <equipo@dominio.es>`. |
+
+Desde **Administración → Crear usuario y enviar acceso**, el administrador define nombre, correo, usuario, contraseña temporal, rol y ficha opcional. El correo se entrega por SMTP y la aplicación obliga a cambiar esa contraseña en el primer acceso.
+
 ## 3. Instalar dependencias, crear el esquema y compilar
 
 Ejecute los siguientes comandos mediante SSH desde la raíz del proyecto. La migración crea las tablas de jugadores, cuentas, pagos, temporadas, competiciones, calendario, avisos e importaciones.
@@ -89,3 +101,5 @@ Las cuotas periódicas se generan al consultar Cuentas cuando llega su vencimien
 El archivo `historical_import_template.tsv` define la plantilla validable para importar históricos. Sus columnas obligatorias son fecha, concepto, dirección, importe, caja y temporada; jugador y método se informan cuando el movimiento es un cobro individual. Antes de una carga masiva, realice una copia de MySQL y contraste el saldo final de cada caja.
 
 Para abrir un nuevo curso, utilice **Cuentas → Cerrar temporada**. La operación archiva el contexto de la temporada activa, abre la nueva sin cargos ni pagos heredados y conserva los saldos de las cajas. Revise la vista previa de cargos abiertos y cajas antes de confirmar.
+
+Los entrenamientos se programan desde **Entrenamientos** y se sincronizan automáticamente con **Calendario** y el resumen. Cada actividad puede incluir lugar, fecha, hora y hora de convocatoria. Los jugadores pueden responder *Voy*, *Quizá* o *No voy*; el recuento queda visible para el equipo.

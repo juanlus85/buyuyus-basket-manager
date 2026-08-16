@@ -21,19 +21,23 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { Bell, CalendarDays, ChartNoAxesCombined, CircleDollarSign, CloudUpload, LayoutDashboard, LogOut, PanelLeft, Settings, Trophy, Users } from "lucide-react";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { Bell, BookOpen, CalendarDays, ChartNoAxesCombined, CircleDollarSign, CloudUpload, Dumbbell, LayoutDashboard, LogOut, PanelLeft, Settings, Trophy, Users } from "lucide-react";
+import { CSSProperties, FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Resumen", path: "/" },
   { icon: Users, label: "Plantilla", path: "/jugadores" },
   { icon: CircleDollarSign, label: "Cuentas", path: "/cuentas" },
   { icon: CalendarDays, label: "Calendario", path: "/calendario" },
+  { icon: Dumbbell, label: "Entrenamientos", path: "/entrenamientos" },
   { icon: Trophy, label: "Competición", path: "/competicion" },
   { icon: Bell, label: "Equipo", path: "/equipo" },
+  { icon: BookOpen, label: "Recursos", path: "/recursos" },
 ];
 
 const adminItems = [
@@ -55,7 +59,11 @@ export default function DashboardLayout({
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
-  const { loading, user } = useAuth();
+  const { loading, user, refresh } = useAuth();
+  const [localUsername, setLocalUsername] = useState("");
+  const [localPassword, setLocalPassword] = useState("");
+  const localLogin = trpc.localAuth.login.useMutation({ onSuccess: async () => { await refresh(); } });
+  const submitLocalLogin = async (event: FormEvent) => { event.preventDefault(); try { await localLogin.mutateAsync({ username: localUsername.toLowerCase(), password: localPassword }); setLocalPassword(""); } catch {} };
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -77,13 +85,9 @@ export default function DashboardLayout({
               Inicia sesión para acceder al espacio privado de Buyuyus Basket.
             </p>
           </div>
-          <Button
-            onClick={() => startLogin()}
-            size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
-          >
-              Iniciar sesión
-          </Button>
+          <form onSubmit={submitLocalLogin} className="w-full space-y-3 rounded-2xl border border-border bg-card p-5 shadow-sm"><Input value={localUsername} onChange={event => setLocalUsername(event.target.value)} placeholder="Usuario" autoComplete="username" className="rounded-xl" required /><Input value={localPassword} onChange={event => setLocalPassword(event.target.value)} placeholder="Contraseña" type="password" autoComplete="current-password" className="rounded-xl" required /><Button type="submit" disabled={localLogin.isPending} size="lg" className="w-full shadow-lg hover:shadow-xl transition-all">{localLogin.isPending ? "Comprobando…" : "Iniciar sesión"}</Button>{localLogin.error ? <p className="text-center text-xs text-rose-700">{localLogin.error.message}</p> : null}</form>
+          <div className="flex w-full items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />o<span className="h-px flex-1 bg-border" /></div>
+          <Button onClick={() => startLogin()} variant="outline" size="lg" className="w-full">Acceso con cuenta Manus</Button>
         </div>
       </div>
     );

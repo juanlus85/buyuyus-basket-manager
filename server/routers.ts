@@ -8,6 +8,8 @@ import { inviteRouter } from "./routers/invites";
 import { playerRouter, userManagementRouter } from "./routers/players";
 import { announcementRouter } from "./routers/collaboration";
 import { sportRouter } from "./routers/sports";
+import { localAuthRouter, localUserRouter } from "./routers/localAuth";
+import { resourceRouter } from "./routers/resources";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -22,6 +24,9 @@ export const appRouter = router({
       } as const;
     }),
   }),
+  localAuth: localAuthRouter,
+  localUsers: localUserRouter,
+  resources: resourceRouter,
   players: playerRouter,
   finance: financeRouter,
   userManagement: userManagementRouter,

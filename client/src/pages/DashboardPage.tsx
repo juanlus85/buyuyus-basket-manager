@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const paymentQueue = trpc.finance.paymentQueue.useQuery(undefined, { enabled: isAdmin });
   const ledger = trpc.finance.ledger.useQuery(undefined, { enabled: isAdmin });
   const mine = trpc.finance.myStatement.useQuery(undefined, { enabled: !isAdmin });
+  const nextActivity = trpc.sports.nextSummary.useQuery();
 
   const outstanding = balances.data?.reduce((total, row) => total + Math.max(row.summary.balanceCents, 0), 0) ?? 0;
   const activePlayers = balances.data?.filter(row => row.player.status === "active").length ?? 0;
@@ -30,6 +31,11 @@ export default function DashboardPage() {
         title={isAdmin ? "El equipo, en orden." : `Hola, ${user?.name?.split(" ")[0] ?? "jugador"}.`}
         description={isAdmin ? "Prioridades financieras, actividad próxima y confirmaciones pendientes para tomar decisiones rápidas." : "Consulta tu estado de cuenta y toda la actividad relevante de Buyuyus Basket."}
       />
+
+      <section className="mt-2 grid gap-5 lg:grid-cols-2">
+        <ActivityCard kind="Siguiente partido" href="/competicion" row={nextActivity.data?.nextMatch} empty="No hay partidos programados." />
+        <ActivityCard kind="Próximo entrenamiento" href="/calendario" row={nextActivity.data?.nextTraining} empty="No hay entrenamientos programados." />
+      </section>
 
       {isAdmin ? (
         <>
@@ -82,4 +88,8 @@ export default function DashboardPage() {
       </section>
     </div>
   );
+}
+
+function ActivityCard({ kind, href, row, empty }: { kind: string; href: string; row: { event: { title: string; startsAt: Date; callAt: Date | null; location: string | null; description: string | null }; match: { opponent: string; venue: "home" | "away" | "neutral" } | null; competitionName: string | null; attendance: { going: number; maybe: number; notGoing: number; mine: "going" | "maybe" | "not_going" | null } } | null | undefined; empty: string }) {
+  return <article className="paper-card overflow-hidden"><div className="flex items-center justify-between border-b border-border/70 px-6 py-5"><div><p className="eyebrow">Agenda deportiva</p><h2 className="display-face mt-1 text-2xl">{kind}</h2></div><CalendarDays className="h-5 w-5 text-primary" /></div>{row ? <div className="px-6 py-5"><p className="text-lg font-bold">{row.match ? `Buyuyus · ${row.match.opponent}` : row.event.title}</p><p className="mt-2 text-sm text-muted-foreground">{dateTime(row.event.startsAt)}{row.event.location ? ` · ${row.event.location}` : ""}</p>{row.event.callAt ? <p className="mt-2 rounded-lg bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-800">Hora de estar: {dateTime(row.event.callAt)}</p> : null}{row.competitionName ? <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">{row.competitionName}</p> : null}{row.event.description ? <p className="mt-3 text-sm text-muted-foreground">{row.event.description}</p> : null}{row.event.callAt || row.event.title ? <p className="mt-4 text-xs text-muted-foreground">Asistencia: {row.attendance.going} sí · {row.attendance.maybe} quizá · {row.attendance.notGoing} no</p> : null}<Link href={href} className="mt-4 inline-flex text-xs font-bold uppercase tracking-wider text-primary hover:underline">Ver en calendario</Link></div> : <p className="px-6 py-9 text-sm text-muted-foreground">{empty}</p>}</article>;
 }
