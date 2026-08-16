@@ -92,15 +92,20 @@
 - [x] Añadir pruebas de acceso local exclusivo y de la precarga del movimiento Invitado Entreno.
 - [x] Añadir prueba de componente que renderice comentarios de pago en el historial administrativo y del jugador.
 - [x] Añadir prueba de interacción que confirme la precarga de concepto, tipo e importe de 3 € al elegir Invitado Entreno.
-- [ ] Añadir prueba integrada del historial administrativo y de la vista de jugador con comentarios de pago reales.
-- [ ] Añadir prueba integrada de la pantalla de Cuentas que seleccione Invitado Entreno y verifique los campos precargados visibles.
+- [x] Añadir prueba integrada del historial administrativo y de la vista de jugador con comentarios de pago reales.
+- [x] Añadir prueba integrada de la pantalla de Cuentas que seleccione Invitado Entreno y verifique los campos precargados visibles.
 - [x] Añadir comentario opcional al registro de todo movimiento habitual y conservarlo en el historial de caja.
 - [x] Etiquetar los comentarios de arbitraje e Invitado Entreno para orientar al administrador sobre rival o persona invitada.
 - [x] Hacer visible y obligatorio el selector de jugador dentro del formulario Registrar cobro antes de elegir su cuota.
 - [x] Añadir pruebas de comentario en movimientos habituales y de selección obligatoria de jugador en cobros.
 - [x] Añadir prueba de rechazo del cobro administrativo cuando falte jugador, cuota o caja.
 - [x] Añadir prueba de integración del formulario Registrar cobro que no permita continuar sin elegir jugador.
-- [ ] Añadir prueba integrada de FinancesPage en modo Registrar cobro con selects reales y botón bloqueado o habilitado según las selecciones.
+- [x] Añadir prueba integrada de FinancesPage en modo Registrar cobro con selects reales y botón bloqueado o habilitado según las selecciones.
+- [x] Añadir arnés integrado compatible con los controles de selección para verificar comentarios en historial administrativo y de jugador.
+- [x] Añadir arnés integrado para seleccionar Invitado Entreno y comprobar concepto, tipo e importe visibles.
+- [x] Añadir arnés integrado para validar el botón de cobro bloqueado y habilitado tras seleccionar jugador, cuota y caja.
+- [x] Añadir arnés con historial administrativo y vista de jugador para comprobar comentarios visibles en ambos contextos.
+- [x] Añadir arnés con selector de movimientos habituales que elija Invitado Entreno y muestre concepto, tipo e importe precargados.
 - [x] Añadir prueba de restricción de asistencia cuando una actividad no admite respuesta.
 - [x] Añadir prueba del router de próximo partido con rival, fecha, lugar y hora de convocatoria.
 - [x] Añadir prueba de creación de entrenamiento y presencia en la consulta compartida de Calendario.
