@@ -21,15 +21,24 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
+import { Bell, CalendarDays, ChartNoAxesCombined, CircleDollarSign, CloudUpload, LayoutDashboard, LogOut, PanelLeft, Settings, Trophy, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: LayoutDashboard, label: "Resumen", path: "/" },
+  { icon: Users, label: "Plantilla", path: "/jugadores" },
+  { icon: CircleDollarSign, label: "Cuentas", path: "/cuentas" },
+  { icon: CalendarDays, label: "Calendario", path: "/calendario" },
+  { icon: Trophy, label: "Competición", path: "/competicion" },
+  { icon: Bell, label: "Equipo", path: "/equipo" },
+];
+
+const adminItems = [
+  { icon: CloudUpload, label: "Importar", path: "/importar" },
+  { icon: ChartNoAxesCombined, label: "Administración", path: "/administracion" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -61,11 +70,11 @@ export default function DashboardLayout({
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-center">
-              Sign in to continue
+            <h1 className="display-face text-3xl tracking-tight text-center">
+              Tu equipo, conectado
             </h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+              Inicia sesión para acceder al espacio privado de Buyuyus Basket.
             </p>
           </div>
           <Button
@@ -73,7 +82,7 @@ export default function DashboardLayout({
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all"
           >
-            Sign in
+              Iniciar sesión
           </Button>
         </div>
       </div>
@@ -111,6 +120,8 @@ function DashboardLayoutContent({
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeMenuItem = menuItems.find(item => item.path === location);
+  const isAdmin = user?.role === "admin";
+  const visibleMenuItems = isAdmin ? [...menuItems, ...adminItems] : menuItems;
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -166,19 +177,21 @@ function DashboardLayoutContent({
               >
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
               </button>
-              {!isCollapsed ? (
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    Navigation
-                  </span>
-                </div>
-              ) : null}
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="court-mark grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-sky-300 text-[0.62rem] font-black tracking-tight text-sidebar">B</span>
+                {!isCollapsed ? (
+                  <div className="min-w-0 leading-none">
+                    <span className="display-face block truncate text-xl tracking-tight text-sidebar-foreground">Buyuyus</span>
+                    <span className="mt-1 block text-[0.56rem] font-bold uppercase tracking-[0.18em] text-sky-200/75">Basket Club</span>
+                  </div>
+                ) : null}
+              </div>
             </div>
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
+              {visibleMenuItems.map(item => {
                 const isActive = location === item.path;
                 return (
                   <SidebarMenuItem key={item.path}>
@@ -186,10 +199,10 @@ function DashboardLayoutContent({
                       isActive={isActive}
                       onClick={() => setLocation(item.path)}
                       tooltip={item.label}
-                      className={`h-10 transition-all font-normal`}
+                      className={`h-10 transition-all font-medium text-sidebar-foreground/80 hover:text-sidebar-foreground ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}`}
                     >
                       <item.icon
-                        className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
+                        className={`h-4 w-4 ${isActive ? "text-sidebar-primary" : ""}`}
                       />
                       <span>{item.label}</span>
                     </SidebarMenuButton>
@@ -224,7 +237,7 @@ function DashboardLayoutContent({
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
+                  <span>Cerrar sesión</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -255,7 +268,7 @@ function DashboardLayoutContent({
             </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 p-4 md:p-7 lg:p-9">{children}</main>
       </SidebarInset>
     </>
   );

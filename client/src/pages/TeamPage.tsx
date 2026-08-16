@@ -1,0 +1,22 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { PageHeader } from "@/components/PageHeader";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { trpc } from "@/lib/trpc";
+import { shortDate } from "@/lib/format";
+import { Bell, Pin, Plus } from "lucide-react";
+import { FormEvent, useState } from "react";
+import { toast } from "sonner";
+
+export default function TeamPage() {
+  const { user } = useAuth(); const isAdmin = user?.role === "admin"; const utils = trpc.useUtils(); const announcements = trpc.announcements.list.useQuery();
+  const publish = trpc.announcements.publish.useMutation({ onSuccess: () => { utils.announcements.list.invalidate(); toast.success("Aviso publicado para el equipo."); } }); const setPinned = trpc.announcements.setPinned.useMutation({ onSuccess: () => utils.announcements.list.invalidate() }); const remove = trpc.announcements.remove.useMutation({ onSuccess: () => { utils.announcements.list.invalidate(); toast.success("Aviso eliminado."); } });
+  const [showForm, setShowForm] = useState(false); const [title, setTitle] = useState(""); const [content, setContent] = useState(""); const [pinned, setPinnedValue] = useState(false);
+  const submit = async (event: FormEvent) => { event.preventDefault(); await publish.mutateAsync({ title, content, isPinned: pinned }); setTitle(""); setContent(""); setPinnedValue(false); setShowForm(false); };
+  return <div><PageHeader eyebrow="Comunicación interna" title="El vestuario, informado." description="Comparte avisos importantes y mantén a toda la plantilla conectada desde un único lugar." action={isAdmin ? <Button onClick={() => setShowForm(!showForm)} className="rounded-xl"><Plus className="mr-2 h-4 w-4" />Publicar aviso</Button> : undefined} />
+    {showForm ? <form onSubmit={submit} className="paper-card mb-7 p-5"><div className="grid gap-4"><Input value={title} onChange={event => setTitle(event.target.value)} placeholder="Título del aviso" className="rounded-xl" required /><Textarea value={content} onChange={event => setContent(event.target.value)} placeholder="Escribe el mensaje para el equipo…" className="min-h-32 rounded-xl" required /><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={pinned} onChange={event => setPinnedValue(event.target.checked)} />Mantener destacado</label></div><div className="mt-4 flex justify-end"><Button type="submit" className="rounded-xl">Publicar</Button></div></form> : null}
+    <section className="space-y-4">{announcements.data?.length ? announcements.data.map(item => <article key={item.id} className={`paper-card p-6 ${item.isPinned ? "border-amber-300 bg-amber-50/40" : ""}`}><div className="flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h2 className="display-face text-2xl">{item.title}</h2>{item.isPinned ? <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100"><Pin className="mr-1 h-3 w-3" />Destacado</Badge> : null}</div><p className="mt-4 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{item.content}</p><p className="mt-5 text-xs text-muted-foreground">Publicado el {shortDate(item.publishedAt)}</p></div>{isAdmin ? <div className="flex gap-2"><Button onClick={() => setPinned.mutate({ id: item.id, isPinned: !item.isPinned })} size="sm" variant="outline" className="rounded-lg">{item.isPinned ? "Quitar" : "Destacar"}</Button><Button onClick={() => remove.mutate({ id: item.id })} size="sm" variant="ghost" className="rounded-lg text-rose-700">Eliminar</Button></div> : null}</div></article>) : <article className="paper-card p-10 text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-sky-100 text-sky-700"><Bell className="h-6 w-6" /></span><h2 className="display-face mt-5 text-3xl">El vestuario está en calma.</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">{isAdmin ? "Publica el primer aviso para compartir una convocatoria, un cambio de horario o una noticia del club." : "Aquí aparecerán los avisos importantes que comparta la administración del equipo."}</p>{isAdmin ? <Button onClick={() => setShowForm(true)} className="mt-5 rounded-xl">Publicar el primer aviso</Button> : null}</article>}</section>
+  </div>;
+}

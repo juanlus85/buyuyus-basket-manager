@@ -2,6 +2,12 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { financeRouter } from "./routers/finances";
+import { importRouter } from "./routers/imports";
+import { inviteRouter } from "./routers/invites";
+import { playerRouter, userManagementRouter } from "./routers/players";
+import { announcementRouter } from "./routers/collaboration";
+import { sportRouter } from "./routers/sports";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -16,13 +22,13 @@ export const appRouter = router({
       } as const;
     }),
   }),
-
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  players: playerRouter,
+  finance: financeRouter,
+  userManagement: userManagementRouter,
+  sports: sportRouter,
+  announcements: announcementRouter,
+  imports: importRouter,
+  invites: inviteRouter,
 });
 
 export type AppRouter = typeof appRouter;

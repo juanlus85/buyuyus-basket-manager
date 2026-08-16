@@ -1,0 +1,27 @@
+# Project TODO
+
+- [x] Definir el modelo funcional, permisos de administrador y jugador, y las reglas de privacidad de datos.
+- [x] Crear el esquema de base de datos para perfiles de jugador, temporadas, competiciones, eventos, partidos, clasificación y comunicación interna.
+- [x] Crear el esquema de contabilidad para ingresos, gastos, cargos individuales, pagos pendientes y confirmaciones.
+- [x] Implementar el control de acceso para que administradores gestionen toda la plataforma y jugadores vean únicamente su ficha y los datos permitidos del equipo.
+- [x] Implementar fichas de jugador con nombre, posición, dorsal, contacto, fotografía y estados activo o baja archivada.
+- [x] Implementar altas, bajas, modificaciones y asignación de rol de usuario desde administración.
+- [x] Implementar registro de ingresos y gastos, con atribución de ingresos a jugadores y cálculo de saldos individuales.
+- [x] Implementar el flujo de pago del jugador con importe, fecha, método, estado pendiente y confirmación administrativa.
+- [x] Implementar temporadas históricas, competiciones y consulta de fases como fase regular, playoffs y Copa de Primavera.
+- [x] Implementar calendario compartido para entrenamientos, partidos y eventos genéricos.
+- [x] Implementar registro de partidos, marcadores, rivales, clasificación acumulada y resultados históricos.
+- [x] Implementar comunicación interna básica para avisos dirigidos al equipo.
+- [x] Implementar almacenamiento seguro de fotografías y documentos con referencias persistentes.
+- [x] Implementar importación asistida de imágenes y PDF para extraer borradores de calendarios, actas y clasificaciones que requieran revisión administrativa.
+- [x] Diseñar el panel de resumen del administrador con deudas, próximos eventos, pagos pendientes y estado del equipo.
+- [x] Aplicar una dirección visual elegante, responsive, accesible y coherente en todas las pantallas.
+- [x] Incluir el indicador discreto de versión y fecha de compilación en configuración.
+- [x] Añadir pruebas unitarias, verificar flujos principales, generar guía de despliegue para Node.js en VPS y validar la compilación.
+- [x] Implementar y verificar control de acceso por rol en temporadas, competiciones, eventos, partidos, comunicación interna e importaciones.
+- [x] Añadir guardas y navegación condicionada por rol para impedir acciones administrativas desde la interfaz de jugador.
+- [x] Añadir pruebas unitarias de autorización para operaciones administrativas y privacidad entre jugadores.
+- [x] Implementar alta o invitación, baja archivada y edición básica de usuarios desde administración.
+- [x] Sincronizar la clasificación acumulada por competición a partir de marcadores confirmados.
+- [x] Incorporar versión y fecha de compilación reales en la zona de configuración.
+- [x] Ampliar pruebas de autorización y privacidad entre jugadores para todos los módulos privados.
