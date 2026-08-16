@@ -41,3 +41,13 @@
 - [x] Añadir pruebas de materialización de cuotas por vencimiento y actualizar la guía de uso y despliegue.
 - [x] Crear una plantilla TSV o CSV validable para movimientos históricos con columnas y ejemplo de cabecera.
 - [x] Añadir un cierre de temporada reutilizable desde administración con vista previa, apertura limpia y conservación de cajas.
+- [x] Crear un menú de movimientos habituales que precargue importe, concepto, tipo y caja desde plantillas reutilizables.
+- [x] Ampliar la ficha de jugador con fecha de nacimiento, talla de camiseta, DNI y el check Activo temporada actual.
+- [x] Aplicar el estado Activo temporada actual al filtrado de jugadores y a la generación de cuotas periódicas.
+- [x] Generar un PDF exportable de jugadores activos con dorsal, nombre, DNI y fecha de nacimiento.
+- [x] Añadir pruebas de perfil federativo, plantilla activa y exportación PDF.
+- [x] Mostrar explícitamente el concepto y el tipo precargados al seleccionar un movimiento habitual.
+- [x] Añadir pruebas unitarias de datos federativos y filtrado Activo temporada actual en plantilla y cuotas.
+- [x] Añadir prueba de filtro de plantilla que excluya jugadores no activos en la temporada actual.
+- [x] Añadir prueba de creación y edición de fecha de nacimiento, DNI y talla de camiseta.
+- [x] Verificar mediante el router que create y update conservan los campos federativos de la ficha.

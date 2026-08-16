@@ -24,7 +24,7 @@ describe("cálculos de cuotas y cajas", () => {
   it("genera la cuota vencida una sola vez para cada jugador activo", () => {
     const rows = buildDueChargeRows({
       now: new Date("2026-09-01T12:00:00Z"),
-      players: [11, 12],
+      players: [{ id: 11, status: "active", isActiveCurrentSeason: true }, { id: 12, status: "active", isActiveCurrentSeason: true }, { id: 13, status: "active", isActiveCurrentSeason: false }, { id: 14, status: "inactive", isActiveCurrentSeason: true }],
       installments: [
         { id: 7, dueAt: new Date("2026-09-01T00:00:00Z"), amountCents: 6000, plan: { seasonId: 4, concept: "Liga", createdByUserId: null } },
         { id: 8, dueAt: new Date("2027-02-01T00:00:00Z"), amountCents: 6000, plan: { seasonId: 4, concept: "Liga", createdByUserId: null } },

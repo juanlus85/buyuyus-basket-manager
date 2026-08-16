@@ -12,6 +12,10 @@ const playerInput = z.object({
   shortName: z.string().trim().max(80).nullable().optional(),
   position: z.string().trim().max(80).nullable().optional(),
   jerseyNumber: z.number().int().min(0).max(99).nullable().optional(),
+  dateOfBirth: z.date().nullable().optional(),
+  jerseySize: z.string().trim().max(16).nullable().optional(),
+  dni: z.string().trim().max(32).nullable().optional(),
+  isActiveCurrentSeason: z.boolean().optional(),
   phone: z.string().trim().max(40).nullable().optional(),
   contactEmail: z.string().trim().email().max(320).nullable().optional(),
   photoKey: z.string().max(512).nullable().optional(),
@@ -24,16 +28,25 @@ function nullableFields<T extends Record<string, unknown>>(input: T) {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined));
 }
 
+export function filterCurrentSeasonPlayers<T extends { status: "active" | "inactive"; isActiveCurrentSeason: boolean }>(players: T[]) {
+  return players.filter(player => player.status === "active" && player.isActiveCurrentSeason);
+}
+
+export function normalizeFederativeFields(input: { dateOfBirth?: Date | null; jerseySize?: string | null; dni?: string | null; isActiveCurrentSeason?: boolean }) {
+  return { dateOfBirth: input.dateOfBirth ?? null, jerseySize: input.jerseySize ?? null, dni: input.dni ?? null, isActiveCurrentSeason: input.isActiveCurrentSeason ?? true };
+}
+
 export const playerRouter = router({
   roster: protectedProcedure.query(async ({ ctx }) => {
     const db = await requireDb();
-    return db
+    const rows = await db
       .select({
         id: playerProfiles.id,
         fullName: playerProfiles.fullName,
         shortName: playerProfiles.shortName,
         position: playerProfiles.position,
         jerseyNumber: playerProfiles.jerseyNumber,
+        isActiveCurrentSeason: playerProfiles.isActiveCurrentSeason,
         photoUrl: playerProfiles.photoUrl,
         status: playerProfiles.status,
         joinedAt: playerProfiles.joinedAt,
@@ -41,6 +54,7 @@ export const playerRouter = router({
       .from(playerProfiles)
       .where(eq(playerProfiles.status, "active"))
       .orderBy(asc(playerProfiles.fullName));
+    return filterCurrentSeasonPlayers(rows);
   }),
 
   adminRoster: adminProcedure.query(async () => {
@@ -62,6 +76,7 @@ export const playerRouter = router({
       shortName: input.shortName ?? null,
       position: input.position ?? null,
       jerseyNumber: input.jerseyNumber ?? null,
+      ...normalizeFederativeFields(input),
       phone: input.phone ?? null,
       contactEmail: input.contactEmail ?? null,
       photoKey: input.photoKey ?? null,
@@ -86,14 +101,14 @@ export const playerRouter = router({
     const db = await requireDb();
     await db
       .update(playerProfiles)
-      .set({ status: "inactive", leftAt: input.leftAt ?? new Date(), updatedAt: new Date() })
+      .set({ status: "inactive", isActiveCurrentSeason: false, leftAt: input.leftAt ?? new Date(), updatedAt: new Date() })
       .where(eq(playerProfiles.id, input.id));
     return { success: true };
   }),
 
   restore: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ input }) => {
     const db = await requireDb();
-    await db.update(playerProfiles).set({ status: "active", leftAt: null, updatedAt: new Date() }).where(eq(playerProfiles.id, input.id));
+    await db.update(playerProfiles).set({ status: "active", isActiveCurrentSeason: true, leftAt: null, updatedAt: new Date() }).where(eq(playerProfiles.id, input.id));
     return { success: true };
   }),
 
@@ -110,6 +125,16 @@ export const playerRouter = router({
       await db.update(playerProfiles).set({ photoKey: stored.key, photoUrl: stored.url, updatedAt: new Date() }).where(eq(playerProfiles.id, input.id));
       return stored;
     }),
+
+  activeSeasonList: adminProcedure.query(async () => {
+    const db = await requireDb();
+    const rows = await db
+      .select({ jerseyNumber: playerProfiles.jerseyNumber, fullName: playerProfiles.fullName, dni: playerProfiles.dni, dateOfBirth: playerProfiles.dateOfBirth, status: playerProfiles.status, isActiveCurrentSeason: playerProfiles.isActiveCurrentSeason })
+      .from(playerProfiles)
+      .where(eq(playerProfiles.status, "active"))
+      .orderBy(asc(playerProfiles.jerseyNumber), asc(playerProfiles.fullName));
+    return filterCurrentSeasonPlayers(rows).map(({ status, isActiveCurrentSeason, ...player }) => player);
+  }),
 });
 
 export const userManagementRouter = router({

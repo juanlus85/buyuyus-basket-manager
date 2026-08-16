@@ -21,8 +21,9 @@ export function calculateAccountBalance(openingBalanceCents: number, transaction
   return openingBalanceCents + transactions.reduce((sum, row) => sum + (row.direction === "income" ? row.amountCents : -row.amountCents), 0) + payments.filter(row => row.status === "confirmed").reduce((sum, row) => sum + row.amountCents, 0);
 }
 
-export function buildDueChargeRows(input: { now: Date; players: number[]; installments: Array<{ id: number; dueAt: Date; amountCents: number; plan: { seasonId: number; concept: string; createdByUserId: number | null } }>; existingKeys: Set<string> }) {
-  return input.installments.filter(item => item.dueAt <= input.now).flatMap(({ id, dueAt, amountCents, plan }) => input.players.filter(playerId => !input.existingKeys.has(`${playerId}:${id}`)).map(playerId => ({ playerId, seasonId: plan.seasonId, feeInstallmentId: id, concept: `${plan.concept} · cuota programada`, amountCents, dueAt, createdByUserId: plan.createdByUserId })));
+export function buildDueChargeRows(input: { now: Date; players: Array<{ id: number; status: "active" | "inactive"; isActiveCurrentSeason: boolean }>; installments: Array<{ id: number; dueAt: Date; amountCents: number; plan: { seasonId: number; concept: string; createdByUserId: number | null } }>; existingKeys: Set<string> }) {
+  const eligiblePlayers = input.players.filter(player => player.status === "active" && player.isActiveCurrentSeason);
+  return input.installments.filter(item => item.dueAt <= input.now).flatMap(({ id, dueAt, amountCents, plan }) => eligiblePlayers.filter(player => !input.existingKeys.has(`${player.id}:${id}`)).map(player => ({ playerId: player.id, seasonId: plan.seasonId, feeInstallmentId: id, concept: `${plan.concept} · cuota programada`, amountCents, dueAt, createdByUserId: plan.createdByUserId })));
 }
 
 async function getCurrentPlayer(userId: number) {
@@ -44,10 +45,10 @@ async function materializeDueCharges() {
   const due = await db.select({ installment: feeInstallments, plan: feePlans }).from(feeInstallments).innerJoin(feePlans, eq(feeInstallments.feePlanId, feePlans.id)).where(and(eq(feePlans.isActive, true)));
   const applicable = due.filter(row => row.installment.dueAt <= now);
   if (!applicable.length) return 0;
-  const players = await db.select({ id: playerProfiles.id }).from(playerProfiles).where(eq(playerProfiles.status, "active"));
+  const players = await db.select({ id: playerProfiles.id, status: playerProfiles.status, isActiveCurrentSeason: playerProfiles.isActiveCurrentSeason }).from(playerProfiles).where(and(eq(playerProfiles.status, "active"), eq(playerProfiles.isActiveCurrentSeason, true)));
   const existing = await db.select({ playerId: playerCharges.playerId, installmentId: playerCharges.feeInstallmentId }).from(playerCharges).where(inArray(playerCharges.feeInstallmentId, applicable.map(row => row.installment.id)));
   const seen = new Set(existing.filter(row => row.installmentId !== null).map(row => `${row.playerId}:${row.installmentId}`));
-  const rows = buildDueChargeRows({ now, players: players.map(player => player.id), installments: due.map(({ installment, plan }) => ({ id: installment.id, dueAt: installment.dueAt, amountCents: installment.amountCents, plan })), existingKeys: seen }).map(row => ({ ...row, concept: `${due.find(item => item.installment.id === row.feeInstallmentId)?.plan.concept ?? row.concept} · ${due.find(item => item.installment.id === row.feeInstallmentId)?.installment.label ?? "cuota programada"}` }));
+  const rows = buildDueChargeRows({ now, players, installments: due.map(({ installment, plan }) => ({ id: installment.id, dueAt: installment.dueAt, amountCents: installment.amountCents, plan })), existingKeys: seen }).map(row => ({ ...row, concept: `${due.find(item => item.installment.id === row.feeInstallmentId)?.plan.concept ?? row.concept} · ${due.find(item => item.installment.id === row.feeInstallmentId)?.installment.label ?? "cuota programada"}` }));
   if (rows.length) await db.insert(playerCharges).values(rows);
   return rows.length;
 }
@@ -238,7 +239,7 @@ export const financeRouter = router({
   }),
   cancelCharge: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ input }) => { const db = await requireDb(); await db.update(playerCharges).set({ status: "cancelled", updatedAt: new Date() }).where(eq(playerCharges.id, input.id)); return { success: true }; }),
   playerBalances: adminProcedure.query(async () => {
-    await materializeDueCharges(); const db = await requireDb(); const seasonId = await getActiveSeasonId(); const [players, charges, payments] = await Promise.all([db.select().from(playerProfiles).orderBy(asc(playerProfiles.status), asc(playerProfiles.fullName)), seasonId ? db.select().from(playerCharges).where(eq(playerCharges.seasonId, seasonId)) : db.select().from(playerCharges), seasonId ? db.select().from(playerPayments).where(eq(playerPayments.seasonId, seasonId)) : db.select().from(playerPayments)]);
+    await materializeDueCharges(); const db = await requireDb(); const seasonId = await getActiveSeasonId(); const [players, charges, payments] = await Promise.all([db.select().from(playerProfiles).where(and(eq(playerProfiles.status, "active"), eq(playerProfiles.isActiveCurrentSeason, true))).orderBy(asc(playerProfiles.fullName)), seasonId ? db.select().from(playerCharges).where(eq(playerCharges.seasonId, seasonId)) : db.select().from(playerCharges), seasonId ? db.select().from(playerPayments).where(eq(playerPayments.seasonId, seasonId)) : db.select().from(playerPayments)]);
     return players.map(player => ({ player, summary: calculateStatement(charges.filter(charge => charge.playerId === player.id), payments.filter(payment => payment.playerId === player.id)) }));
   }),
 });

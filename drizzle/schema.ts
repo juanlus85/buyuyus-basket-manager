@@ -37,11 +37,15 @@ export const playerProfiles = mysqlTable(
     shortName: varchar("shortName", { length: 80 }),
     position: varchar("position", { length: 80 }),
     jerseyNumber: int("jerseyNumber"),
+    dateOfBirth: timestamp("dateOfBirth"),
+    jerseySize: varchar("jerseySize", { length: 16 }),
+    dni: varchar("dni", { length: 32 }),
     phone: varchar("phone", { length: 40 }),
     contactEmail: varchar("contactEmail", { length: 320 }),
     photoKey: varchar("photoKey", { length: 512 }),
     photoUrl: varchar("photoUrl", { length: 1024 }),
     status: mysqlEnum("status", ["active", "inactive"]).default("active").notNull(),
+    isActiveCurrentSeason: boolean("isActiveCurrentSeason").default(true).notNull(),
     joinedAt: timestamp("joinedAt"),
     leftAt: timestamp("leftAt"),
     notes: text("notes"),
@@ -51,6 +55,7 @@ export const playerProfiles = mysqlTable(
   table => ({
     playerUserUnique: uniqueIndex("player_user_unique").on(table.userId),
     playerStatusIndex: index("player_status_index").on(table.status),
+    playerCurrentSeasonIndex: index("player_current_season_index").on(table.isActiveCurrentSeason),
   })
 );
 
