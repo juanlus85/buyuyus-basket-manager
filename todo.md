@@ -25,3 +25,19 @@
 - [x] Sincronizar la clasificación acumulada por competición a partir de marcadores confirmados.
 - [x] Incorporar versión y fecha de compilación reales en la zona de configuración.
 - [x] Ampliar pruebas de autorización y privacidad entre jugadores para todos los módulos privados.
+- [x] Crear plantillas de cuotas periódicas asociadas a una temporada, con importe, fechas de vencimiento y generación de cargos por jugador.
+- [x] Implementar cuotas programadas como los dos pagos de liga de 60 € con vencimientos configurables el 1 de septiembre y el 1 de febrero.
+- [x] Crear un catálogo administrable de conceptos predefinidos para ingresos, gastos, pagos y cobros recurrentes.
+- [x] Permitir registrar rápidamente un pago o gasto seleccionando un concepto, jugador y caja, conservando importe, fecha, método y responsable.
+- [x] Crear cajas o cuentas de responsables, con saldo, titular y trazabilidad de los movimientos de entrada, salida y transferencias.
+- [x] Añadir pantallas de cuotas, conceptos y cajas dentro de Cuentas, con filtros y resúmenes contables.
+- [x] Añadir pruebas de generación de cuotas y cálculo de saldos por caja, y actualizar la guía de despliegue.
+- [x] Preparar una hoja de importación validable para cargar ingresos, gastos, cuotas, pagos y saldos de caja de la temporada anterior.
+- [x] Importar la temporada anterior como histórico contable sin mezclarla con la nueva temporada.
+- [x] Implementar el cierre de temporada que conserva los saldos de cajas y abre una nueva temporada sin cargos ni pagos heredados.
+- [x] Configurar el inicio de la nueva temporada el 1 de septiembre con cuotas de liga de 60 € el 1 de septiembre y el 1 de febrero.
+- [x] Completar el registro rápido con fecha, concepto seleccionado, jugador, caja y método visibles y editables.
+- [x] Crear un historial filtrable por caja, temporada y tipo de movimiento, incluidas transferencias.
+- [x] Añadir pruebas de materialización de cuotas por vencimiento y actualizar la guía de uso y despliegue.
+- [x] Crear una plantilla TSV o CSV validable para movimientos históricos con columnas y ejemplo de cabecera.
+- [x] Añadir un cierre de temporada reutilizable desde administración con vista previa, apertura limpia y conservación de cajas.

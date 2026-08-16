@@ -121,6 +121,44 @@ export const teamFinancialCategories = mysqlTable(
   table => ({ categoryNameDirectionUnique: uniqueIndex("category_name_direction_unique").on(table.name, table.direction) })
 );
 
+/** Cash boxes and accounts held by team administrators or payment providers. */
+export const teamAccounts = mysqlTable(
+  "teamAccounts",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 120 }).notNull(),
+    holderName: varchar("holderName", { length: 160 }),
+    type: mysqlEnum("type", ["cash", "bank", "digital"]).default("cash").notNull(),
+    openingBalanceCents: int("openingBalanceCents").default(0).notNull(),
+    isActive: boolean("isActive").default(true).notNull(),
+    notes: text("notes"),
+    createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({ accountNameUnique: uniqueIndex("account_name_unique").on(table.name), accountActiveIndex: index("account_active_index").on(table.isActive) })
+);
+
+/** Reusable presets such as league registration, court rental or sponsorship income. */
+export const financeTemplates = mysqlTable(
+  "financeTemplates",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 120 }).notNull(),
+    direction: mysqlEnum("direction", ["income", "expense"]).notNull(),
+    categoryId: int("categoryId").references(() => teamFinancialCategories.id, { onDelete: "set null" }),
+    defaultAccountId: int("defaultAccountId").references(() => teamAccounts.id, { onDelete: "set null" }),
+    defaultConcept: varchar("defaultConcept", { length: 180 }).notNull(),
+    defaultAmountCents: int("defaultAmountCents"),
+    isActive: boolean("isActive").default(true).notNull(),
+    notes: text("notes"),
+    createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({ templateNameDirectionUnique: uniqueIndex("template_name_direction_unique").on(table.name, table.direction), templateActiveIndex: index("template_active_index").on(table.isActive) })
+);
+
 /** General team income and expenses. Player payments are recorded separately for a confirmable workflow. */
 export const teamTransactions = mysqlTable(
   "teamTransactions",
@@ -128,6 +166,9 @@ export const teamTransactions = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     seasonId: int("seasonId").references(() => seasons.id, { onDelete: "set null" }),
     categoryId: int("categoryId").references(() => teamFinancialCategories.id, { onDelete: "set null" }),
+    accountId: int("accountId").references(() => teamAccounts.id, { onDelete: "set null" }),
+    templateId: int("templateId").references(() => financeTemplates.id, { onDelete: "set null" }),
+    transferKey: varchar("transferKey", { length: 64 }),
     direction: mysqlEnum("direction", ["income", "expense"]).notNull(),
     concept: varchar("concept", { length: 180 }).notNull(),
     amountCents: int("amountCents").notNull(),
@@ -139,8 +180,40 @@ export const teamTransactions = mysqlTable(
   },
   table => ({
     transactionSeasonIndex: index("transaction_season_index").on(table.seasonId),
+    transactionAccountIndex: index("transaction_account_index").on(table.accountId),
     transactionOccurredIndex: index("transaction_occurred_index").on(table.occurredAt),
   })
+);
+
+/** A recurring obligation, composed of one or more scheduled installments. */
+export const feePlans = mysqlTable(
+  "feePlans",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    seasonId: int("seasonId").notNull().references(() => seasons.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 140 }).notNull(),
+    concept: varchar("concept", { length: 180 }).notNull(),
+    isActive: boolean("isActive").default(true).notNull(),
+    notes: text("notes"),
+    createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({ feePlanSeasonIndex: index("fee_plan_season_index").on(table.seasonId), feePlanActiveIndex: index("fee_plan_active_index").on(table.isActive) })
+);
+
+export const feeInstallments = mysqlTable(
+  "feeInstallments",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    feePlanId: int("feePlanId").notNull().references(() => feePlans.id, { onDelete: "cascade" }),
+    label: varchar("label", { length: 120 }).notNull(),
+    amountCents: int("amountCents").notNull(),
+    dueAt: timestamp("dueAt").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({ installmentPlanIndex: index("installment_plan_index").on(table.feePlanId), installmentDueIndex: index("installment_due_index").on(table.dueAt) })
 );
 
 /** Charges represent amounts owed by a specific player, independently of payment submission. */
@@ -150,6 +223,7 @@ export const playerCharges = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     playerId: int("playerId").notNull().references(() => playerProfiles.id, { onDelete: "cascade" }),
     seasonId: int("seasonId").references(() => seasons.id, { onDelete: "set null" }),
+    feeInstallmentId: int("feeInstallmentId").references(() => feeInstallments.id, { onDelete: "set null" }),
     concept: varchar("concept", { length: 180 }).notNull(),
     amountCents: int("amountCents").notNull(),
     dueAt: timestamp("dueAt"),
@@ -161,6 +235,7 @@ export const playerCharges = mysqlTable(
   },
   table => ({
     chargePlayerIndex: index("charge_player_index").on(table.playerId),
+    chargeInstallmentPlayerUnique: uniqueIndex("charge_installment_player_unique").on(table.playerId, table.feeInstallmentId),
     chargeSeasonIndex: index("charge_season_index").on(table.seasonId),
   })
 );
@@ -173,6 +248,8 @@ export const playerPayments = mysqlTable(
     playerId: int("playerId").notNull().references(() => playerProfiles.id, { onDelete: "cascade" }),
     chargeId: int("chargeId").references(() => playerCharges.id, { onDelete: "set null" }),
     seasonId: int("seasonId").references(() => seasons.id, { onDelete: "set null" }),
+    accountId: int("accountId").references(() => teamAccounts.id, { onDelete: "set null" }),
+    concept: varchar("concept", { length: 180 }),
     amountCents: int("amountCents").notNull(),
     paidAt: timestamp("paidAt").notNull(),
     method: mysqlEnum("method", ["cash", "bank_transfer", "bizum", "paypal"]).notNull(),
@@ -189,6 +266,7 @@ export const playerPayments = mysqlTable(
   },
   table => ({
     paymentPlayerIndex: index("payment_player_index").on(table.playerId),
+    paymentAccountIndex: index("payment_account_index").on(table.accountId),
     paymentStatusIndex: index("payment_status_index").on(table.status),
     paymentSeasonIndex: index("payment_season_index").on(table.seasonId),
   })

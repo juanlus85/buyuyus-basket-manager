@@ -81,3 +81,11 @@ pnpm test
 ```
 
 Finalmente, reinicie la aplicación desde Plesk. La pantalla **Administración** muestra la versión y la fecha de compilación para facilitar la comprobación visual de cada actualización.
+
+## 7. Operación de cuotas, cajas y temporadas
+
+Las cuotas periódicas se generan al consultar Cuentas cuando llega su vencimiento; no requieren procesos permanentes ni tareas cron en el VPS. Para cada nueva temporada, configure los vencimientos desde **Cuentas → Cuota programada**. Los pagos solo se incorporan al saldo tras la confirmación del administrador y la asignación de una caja.
+
+El archivo `historical_import_template.tsv` define la plantilla validable para importar históricos. Sus columnas obligatorias son fecha, concepto, dirección, importe, caja y temporada; jugador y método se informan cuando el movimiento es un cobro individual. Antes de una carga masiva, realice una copia de MySQL y contraste el saldo final de cada caja.
+
+Para abrir un nuevo curso, utilice **Cuentas → Cerrar temporada**. La operación archiva el contexto de la temporada activa, abre la nueva sin cargos ni pagos heredados y conserva los saldos de las cajas. Revise la vista previa de cargos abiertos y cajas antes de confirmar.
