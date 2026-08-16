@@ -126,12 +126,19 @@ export const financeRouter = router({
     return { success: true };
   }),
 
-  recordAdminPayment: adminProcedure.input(z.object({ playerId: z.number().int().positive(), chargeId: z.number().int().positive(), accountId: z.number().int().positive(), amountCents: moneyCents, paidAt: z.date(), method: paymentMethod, adminNote: z.string().trim().max(2000).nullable().optional() })).mutation(async ({ ctx, input }) => {
+  recordAdminPayment: adminProcedure.input(z.object({ playerId: z.number().int().positive(), chargeId: optionalId, accountId: z.number().int().positive(), amountCents: moneyCents, paidAt: z.date(), method: paymentMethod, concept: z.string().trim().min(2).max(180).nullable().optional(), adminNote: z.string().trim().max(2000).nullable().optional() })).mutation(async ({ ctx, input }) => {
+    if (!input.chargeId && !input.concept) throw new TRPCError({ code: "BAD_REQUEST", message: "Selecciona una cuota pendiente o indica el concepto de una nueva cuota." });
     const db = await requireDb();
     const [player] = await db.select().from(playerProfiles).where(eq(playerProfiles.id, input.playerId)).limit(1);
     if (!player) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el jugador." });
     if (player.status !== "active" || !player.isActiveCurrentSeason) throw new TRPCError({ code: "BAD_REQUEST", message: "El jugador no está activo en la temporada actual." });
-    const [charge] = await db.select().from(playerCharges).where(and(eq(playerCharges.id, input.chargeId), eq(playerCharges.playerId, input.playerId), eq(playerCharges.status, "open"))).limit(1);
+    let chargeId = input.chargeId;
+    if (!chargeId) {
+      if (!input.concept) throw new TRPCError({ code: "BAD_REQUEST", message: "Indica el concepto de la cuota que vas a asignar al jugador." });
+      const result = await db.insert(playerCharges).values({ playerId: input.playerId, seasonId: await getActiveSeasonId(), concept: input.concept, amountCents: input.amountCents, dueAt: input.paidAt, createdByUserId: ctx.user.id });
+      chargeId = Number(result[0].insertId);
+    }
+    const [charge] = await db.select().from(playerCharges).where(and(eq(playerCharges.id, chargeId), eq(playerCharges.playerId, input.playerId), eq(playerCharges.status, "open"))).limit(1);
     if (!charge) throw new TRPCError({ code: "BAD_REQUEST", message: "Selecciona un cargo abierto que corresponda al jugador." });
     const payments = await db.select().from(playerPayments).where(and(eq(playerPayments.chargeId, charge.id), eq(playerPayments.status, "confirmed")));
     const outstandingCents = calculateOutstandingCents(charge.amountCents, payments);
@@ -189,6 +196,7 @@ export const financeRouter = router({
     const db = await requireDb();
     const [template] = await db.select().from(financeTemplates).where(and(eq(financeTemplates.id, input.templateId), eq(financeTemplates.isActive, true))).limit(1);
     if (!template) throw new TRPCError({ code: "NOT_FOUND", message: "El concepto predefinido no está disponible." });
+    if (template.name === "Invitado Entreno" && !input.notes?.trim().startsWith("Invitado:")) throw new TRPCError({ code: "BAD_REQUEST", message: "Indica el nombre del invitado para registrar este entrenamiento." });
     const amountCents = input.amountCents ?? template.defaultAmountCents;
     if (!amountCents) throw new TRPCError({ code: "BAD_REQUEST", message: "Indica el importe para este concepto." });
     const result = await db.insert(teamTransactions).values({ seasonId: input.seasonId ?? await getActiveSeasonId(), categoryId: template.categoryId, accountId: input.accountId ?? template.defaultAccountId, templateId: template.id, direction: template.direction, concept: template.defaultConcept, amountCents, occurredAt: input.occurredAt, notes: input.notes ?? null, createdByUserId: ctx.user.id });

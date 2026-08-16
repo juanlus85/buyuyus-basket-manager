@@ -24,5 +24,6 @@ describe("presentación de contabilidad", () => {
     expect(canRecordAdminPayment({ playerId: "8", chargeId: "none", accountId: "3" })).toBe(false);
     expect(canRecordAdminPayment({ playerId: "8", chargeId: "15", accountId: "none" })).toBe(false);
     expect(canRecordAdminPayment({ playerId: "8", chargeId: "15", accountId: "3" })).toBe(true);
+    expect(canRecordAdminPayment({ playerId: "8", chargeId: "none", accountId: "3", manualConcept: "Cuota de liga" })).toBe(true);
   });
 });

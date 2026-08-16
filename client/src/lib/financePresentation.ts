@@ -18,6 +18,6 @@ export function visiblePaymentComment(note: string | null | undefined) {
   return note ? `Comentario: ${note}` : null;
 }
 
-export function canRecordAdminPayment(input: { playerId: string; chargeId: string; accountId: string }) {
-  return input.playerId !== "none" && input.chargeId !== "none" && input.accountId !== "none";
+export function canRecordAdminPayment(input: { playerId: string; chargeId: string; accountId: string; manualConcept?: string }) {
+  return input.playerId !== "none" && input.accountId !== "none" && (input.chargeId !== "none" || Boolean(input.manualConcept?.trim()));
 }

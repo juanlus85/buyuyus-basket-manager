@@ -121,3 +121,16 @@
 - [x] Añadir selector de temporada en la ficha de jugador y filtrar el historial estadístico con `seasonId`.
 - [x] Añadir prueba de confirmación exitosa de acta que actualice marcador, participación y sanciones por jugador.
 - [x] Ampliar la prueba de acta confirmada para comprobar `played`, faltas, técnicas y antideportivas persistidas por jugador.
+- [x] Corregir el selector real de jugador en Registrar cobro para que cargue sus cuotas abiertas sin depender de datos incompletos del resumen.
+- [x] Mostrar un estado claro cuando el jugador no tenga cuotas pendientes y bloquear el registro de pago.
+- [x] Verificar con datos reales que el pago seleccionado reduce la deuda del jugador correspondiente.
+- [x] Permitir crear un cargo o cuota individual para un jugador cuando todavía no existan cuotas abiertas de la temporada.
+- [x] Mantener los vencimientos programados sin generar deuda anticipada, pero permitir el cobro asociado mediante un cargo individual explícito.
+- [x] Añadir el campo obligatorio Nombre del invitado cuando se seleccione Invitado Entreno.
+- [x] Guardar el nombre del invitado en el comentario e historial del ingreso sin exigir ficha de jugador.
+- [x] Añadir pruebas de validación del nombre de invitado y de su presencia en el historial de Cuentas.
+- [x] Mostrar un estado vacío explícito cuando el jugador seleccionado no tenga cuotas abiertas y distinguir la creación de cuota individual.
+- [x] Verificar con un flujo o consulta real que un cobro confirmado reduce el saldo del jugador correcto y aparece en su historial.
+- [x] Añadir prueba de accountHistory que confirme que el nombre del invitado es visible en el movimiento Invitado Entreno.
+- [ ] Verificar en una transacción persistida que un cobro individual reduce la deuda del jugador y aparece en el historial.
+- [ ] Documentar la comprobación final del flujo Registrar cobro en el expediente de verificación.
