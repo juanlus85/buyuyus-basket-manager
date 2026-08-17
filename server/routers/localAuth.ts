@@ -9,7 +9,7 @@ import { getDb, requireDb } from "../db";
 import { getSessionCookieOptions } from "../_core/cookies";
 import { sdk } from "../_core/sdk";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "../_core/trpc";
-import { sendAccountCredentials } from "../mailer";
+import { sendAccountCredentials, verifySmtpConfiguration } from "../mailer";
 
 const username = z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,80}$/, "Usa entre 3 y 80 caracteres: letras, números, punto, guion o guion bajo.");
 const password = z.string().min(10, "La contraseña debe tener al menos 10 caracteres.").max(128);
@@ -36,6 +36,7 @@ export const localAuthRouter = router({
 });
 
 export const localUserRouter = router({
+  verifySmtp: adminProcedure.mutation(async () => verifySmtpConfiguration()),
   create: adminProcedure.input(z.object({ name: z.string().trim().min(2).max(160), email: z.string().trim().email().max(320), username, password, role: z.enum(["user", "admin"]).default("user"), playerId: z.number().int().positive().nullable().optional() })).mutation(async ({ ctx, input }) => {
     const db = await requireDb();
     const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.username, input.username)).limit(1);

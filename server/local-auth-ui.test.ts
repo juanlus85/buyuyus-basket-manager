@@ -16,4 +16,10 @@ describe("acceso local exclusivo", () => {
     expect(adminPage).toContain("Contraseña temporal nueva");
     expect(adminPage).toContain("Restablecer y enviar");
   });
+
+  it("permite verificar SMTP desde el proceso de la aplicación sin mostrar secretos", () => {
+    const adminPage = readFileSync(new URL("../client/src/pages/AdminPage.tsx", import.meta.url), "utf8");
+    expect(adminPage).toContain("localUsers.verifySmtp");
+    expect(adminPage).toContain("Comprobar SMTP");
+  });
 });

@@ -3,10 +3,10 @@ import bcrypt from "bcryptjs";
 import type { TrpcContext } from "../_core/context";
 
 vi.mock("../db", () => ({ requireDb: vi.fn(), getDb: vi.fn() }));
-vi.mock("../mailer", () => ({ sendAccountCredentials: vi.fn() }));
+vi.mock("../mailer", () => ({ sendAccountCredentials: vi.fn(), verifySmtpConfiguration: vi.fn() }));
 
 import { requireDb } from "../db";
-import { sendAccountCredentials } from "../mailer";
+import { sendAccountCredentials, verifySmtpConfiguration } from "../mailer";
 import { appRouter } from "../routers";
 
 const adminContext = { user: { id: 1, openId: "admin", email: "admin@example.com", name: "Admin", loginMethod: "manus", role: "admin" as const, isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() }, req: { protocol: "https", headers: {} }, res: { cookie: vi.fn(), clearCookie: vi.fn() } } as unknown as TrpcContext;
@@ -40,5 +40,15 @@ describe("localUsers.create", () => {
 
     expect(result).toEqual({ id: 9, emailSent: false, delivery: null });
     expect(insertedValues).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("localUsers.verifySmtp", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("devuelve únicamente el estado seguro de SMTP sin exponer valores", async () => {
+    vi.mocked(verifySmtpConfiguration).mockResolvedValue({ configured: false, verified: false, missing: ["SMTP_PASS"] });
+
+    await expect(appRouter.createCaller(adminContext).localUsers.verifySmtp()).resolves.toEqual({ configured: false, verified: false, missing: ["SMTP_PASS"] });
   });
 });

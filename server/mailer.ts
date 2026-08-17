@@ -7,6 +7,11 @@ export type SmtpDeliveryResult = {
   response: string;
 };
 
+export type SmtpVerificationResult =
+  | { configured: false; verified: false; missing: string[] }
+  | { configured: true; verified: true; missing: [] }
+  | { configured: true; verified: false; missing: [] };
+
 const ACCESS_URL = process.env.APP_PUBLIC_URL ?? "https://buyuyus.blancoguzman.es";
 
 function smtpTransport() {
@@ -16,6 +21,20 @@ function smtpTransport() {
     secure: Number(process.env.SMTP_PORT) === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
+}
+
+export async function verifySmtpConfiguration(): Promise<SmtpVerificationResult> {
+  const required = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "SMTP_FROM"];
+  const missing = required.filter(key => !process.env[key]);
+  if (missing.length > 0) return { configured: false, verified: false, missing };
+
+  try {
+    await smtpTransport().verify();
+    return { configured: true, verified: true, missing: [] };
+  } catch (error) {
+    console.error("[smtp] Verification failed", error);
+    return { configured: true, verified: false, missing: [] };
+  }
 }
 
 export async function sendAccountCredentials(input: { recipient: string; name: string; username: string; password: string; mustChangePassword?: boolean }): Promise<SmtpDeliveryResult> {
