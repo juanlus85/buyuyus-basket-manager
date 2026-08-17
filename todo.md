@@ -193,3 +193,11 @@
 - [ ] Verificar con una cuenta de usuario que las tarjetas aparecen separadas y alineadas tras el reinicio.
 - [x] Preparar SQL idempotente para cargar los movimientos habituales sin crear movimientos financieros reales.
 - [x] Verificar y entregar el SQL de movimientos habituales para ejecución en MySQL.
+- [x] Crear una sección Estadísticas visible para el equipo con selector automático de temporada.
+- [x] Mostrar por jugador partidos jugados, ganados, perdidos, faltas, técnicas y antideportivas.
+- [x] Añadir gráficos comparativos de participación, victorias, faltas, técnicas y antideportivas.
+- [ ] Importar las actas históricas aportadas mediante extracción revisable antes de confirmar sus estadísticas.
+- [x] Probar y verificar el nuevo módulo estadístico en escritorio y móvil.
+- [x] Confirmar la regla de actas: jugador listado equivale a partido disputado; P, T y U equivalen a falta personal, técnica y antideportiva.
+- [x] Incorporar estas reglas al extractor de próximas actas con revisión administrativa obligatoria.
+- [ ] Crear una ficha histórica inactiva para Alfonso Carlos Beltrán Galán y vincular sus actas de 2025–2026.

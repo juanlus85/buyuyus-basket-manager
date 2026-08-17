@@ -35,13 +35,14 @@ const menuItems = [
   { icon: CalendarDays, label: "Calendario", path: "/calendario" },
   { icon: Dumbbell, label: "Entrenamientos", path: "/entrenamientos" },
   { icon: Trophy, label: "Competición", path: "/competicion" },
+  { icon: ChartNoAxesCombined, label: "Estadísticas", path: "/estadisticas" },
   { icon: Bell, label: "Equipo", path: "/equipo" },
   { icon: BookOpen, label: "Recursos", path: "/recursos" },
 ];
 
 const adminItems = [
   { icon: CloudUpload, label: "Importar", path: "/importar" },
-  { icon: ChartNoAxesCombined, label: "Administración", path: "/administracion" },
+  { icon: Settings, label: "Administración", path: "/administracion" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

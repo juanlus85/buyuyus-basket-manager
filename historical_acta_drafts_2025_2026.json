@@ -1,0 +1,1712 @@
+{
+  "generatedAt": "2026-08-17T23:55:29.371Z",
+  "rules": {
+    "participation": "Todo jugador listado en el acta cuenta como partido disputado.",
+    "P": "Falta personal",
+    "T": "Falta técnica",
+    "U": "Falta antideportiva"
+  },
+  "matches": [
+    {
+      "sourceFile": "Acta_PartId_431812.pdf",
+      "sourceMatchId": "431812",
+      "occurredOn": "2025-11-09",
+      "opponent": "DESFASE FORASTERO",
+      "ownScore": 26,
+      "opponentScore": 25,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos y marcador final; media-alta para nombres y dorsales; media para la interpretación exacta de las marcas manuscritas y baja para confirmar participación del dorsal 8.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 4,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P P P P legibles en sanciones",
+          "observation": "la posición exacta de las marcas se conserva como lectura visual; sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P P legibles en sanciones",
+          "observation": "sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P P P legibles en sanciones",
+          "observation": "sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P legible en sanciones",
+          "observation": "no se distingue X de entrada; participación pendiente de revisión"
+        },
+        {
+          "rawName": "GOTOR CRESPILLO ALVARO",
+          "playerName": "GOTOR CRESPILLO, ÁLVARO",
+          "jerseyNumber": 12,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada",
+          "observation": "sin sanción P legible; sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P P legibles en sanciones",
+          "observation": "sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P legible en sanciones",
+          "observation": "capitán indicado con C; sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada",
+          "observation": "sin sanción P legible; sin técnica o antideportiva legible"
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ANGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 55,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X de entrada; P P legibles en sanciones",
+          "observation": "sin técnica o antideportiva legible"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431814.pdf",
+      "sourceMatchId": "431814",
+      "occurredOn": "2025-11-16",
+      "opponent": "C.D. PENA LA KEKA",
+      "ownScore": 31,
+      "opponentScore": 38,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y nombres/dorsales; media para las marcas individuales, cuya ubicación o naturaleza exacta queda pendiente de revisión cuando aparece P.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X X X X",
+          "observation": "Marcas de entrada legibles; sin sanción legible."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "P legible en la zona de marcas; naturaleza exacta pendiente de revisión."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 4,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P",
+          "observation": "Marcas P legibles; naturaleza exacta pendiente de revisión."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Marcas P legibles; naturaleza exacta pendiente de revisión."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca P legible; naturaleza exacta pendiente de revisión."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431818.pdf",
+      "sourceMatchId": "431818",
+      "occurredOn": "2025-11-23",
+      "opponent": "FAFA BC",
+      "ownScore": 46,
+      "opponentScore": 31,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y plantilla; media para la interpretación de las marcas P por su reducido tamaño; no se observan sanciones legibles de Buyuyus.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción."
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca P legible en participación; sin sanción legible."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca P legible en participación; sin sanción legible."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Dos marcas P legibles en participación; sin sanción legible."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431825.pdf",
+      "sourceMatchId": "431825",
+      "occurredOn": "2025-11-30",
+      "opponent": "CARTUJA CITY CAMINOD VIVOS",
+      "ownScore": 43,
+      "opponentScore": 26,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos y marcador; alta para nombres y dorsales; media para la interpretación exacta de las marcas P, que se transcriben literalmente sin estimar su naturaleza.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de entrada o sanción."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P",
+          "observation": "Entrada marcada en la primera casilla; una marca P legible en sanciones."
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ANGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada marcada en la primera casilla; dos marcas P legibles en sanciones."
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P P",
+          "observation": "Entrada marcada en la primera casilla; tres marcas P legibles en sanciones."
+        },
+        {
+          "rawName": "GOTOR CRESPILLO ALVARO",
+          "playerName": "GOTOR CRESPILLO, ÁLVARO",
+          "jerseyNumber": 12,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X",
+          "observation": "Entrada marcada en la primera casilla; sin sanción legible."
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 14,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada marcada en la primera casilla; dos marcas P legibles en sanciones."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431831.pdf",
+      "sourceMatchId": "431831",
+      "occurredOn": "2025-12-14",
+      "opponent": "D BAR N BAR",
+      "ownScore": 37,
+      "opponentScore": 27,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y dorsales; media para la interpretación de las marcas manuscritas P/T, y pendiente de revisión cualquier sanción cuya codificación no quede inequívoca.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Entrada marcada; dos marcas P legibles."
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P T",
+          "observation": "Entrada marcada; tres marcas P y una T legibles."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Entrada marcada; una marca P legible."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Entrada marcada; dos marcas P legibles."
+        },
+        {
+          "rawName": "BAYO SANCHEZ MIGUEL ANGEL",
+          "playerName": "BAYO SÁNCHEZ, MIGUEL ÁNGEL",
+          "jerseyNumber": 10,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca visible de entrada ni de sanción."
+        },
+        {
+          "rawName": "GOTOR CRESPILLO ALVARO",
+          "playerName": "GOTOR CRESPILLO, ÁLVARO",
+          "jerseyNumber": 12,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Entrada marcada; dos marcas P legibles."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Entrada marcada; una marca P legible."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Entrada marcada; una marca P legible."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Entrada marcada; dos marcas P legibles."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431837.pdf",
+      "sourceMatchId": "431837",
+      "occurredOn": "2025-12-21",
+      "opponent": "AL PASO C B CAREBA",
+      "ownScore": 50,
+      "opponentScore": 36,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y nombres/dorsales; media para las marcas manuscritas/codificadas de participación y sanción, cuyo significado específico queda pendiente de revisión.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "4 entradas marcadas; sin sanción visible",
+          "observation": "Marcas de participación legibles; no se aprecia sanción."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 5,
+          "played": true,
+          "fouls": 5,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P P",
+          "observation": "Cinco marcas P legibles en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Dos marcas P legibles en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 5,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P P",
+          "observation": "Cinco marcas P legibles en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P T",
+          "observation": "Marcas P y T legibles en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Una marca P legible en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "BELTRAN GALAN ALFONSO CARLOS",
+          "playerName": "BELTRÁN GALÁN, ALFONSO CARLOS",
+          "jerseyNumber": 28,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "T",
+          "observation": "Una marca T legible en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 4,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P",
+          "observation": "Cuatro marcas P legibles en sanciones; significado no interpretado."
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 1,
+          "sourceMarks": "U",
+          "observation": "Una marca U legible en sanciones; significado no interpretado."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431840.pdf",
+      "sourceMatchId": "431840",
+      "occurredOn": "2026-01-11",
+      "opponent": "CB FLAMA",
+      "ownScore": 41,
+      "opponentScore": 30,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, lado, marcador y dorsales; alta para las marcas visibles de entrada y P, pero pendiente de revisión la interpretación exacta de esas marcas como faltas o sanciones; la sección de incidencias está vacía.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1; P P",
+          "observation": "Marcas legibles; el significado específico de P no se interpreta."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1; P",
+          "observation": "Marcas legibles; el significado específico de P no se interpreta."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1",
+          "observation": "Sin marca de sanción legible."
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1",
+          "observation": "Sin marca de sanción legible."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1; P P P",
+          "observation": "Marcas legibles; el significado específico de P no se interpreta."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1; P P",
+          "observation": "Marcas legibles; el significado específico de P no se interpreta."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada 1; P",
+          "observation": "Marcas legibles; el significado específico de P no se interpreta."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431846.pdf",
+      "sourceMatchId": "431846",
+      "occurredOn": "2026-01-18",
+      "opponent": "CB MACASTA AZUL",
+      "ownScore": 33,
+      "opponentScore": 37,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y plantilla; baja para participación y sanciones, salvo una marca «B» legible junto al dorsal 13 cuyo significado queda pendiente de revisión.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 5,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 9,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ANGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 13,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "B",
+          "observation": "marca B legible en la zona de sanciones; tipo o significado pendiente de revisión"
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca legible",
+          "observation": "participación y sanciones pendientes de revisión"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431851.pdf",
+      "sourceMatchId": "431851",
+      "occurredOn": "2026-01-25",
+      "opponent": "CD DABROWA",
+      "ownScore": 27,
+      "opponentScore": 39,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición B y marcador; alta para nombres y dorsales; media para la transcripción de marcas manuscritas y baja para interpretar si corresponden a faltas, técnicas o sanciones específicas.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P",
+          "observation": "Entrada X legible; marca P legible en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada X legible; dos marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P",
+          "observation": "Entrada X legible; marca P legible en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 14,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 1,
+          "sourceMarks": "X; U P",
+          "observation": "Entrada X legible; marcas U y P legibles en la zona de sanciones; naturaleza exacta de U pendiente de revisión."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada X legible; dos marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 17,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada X legible; dos marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P P",
+          "observation": "Entrada X legible; tres marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada X legible; dos marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada X legible; dos marcas P legibles en la zona de sanciones, cuya interpretación exacta queda pendiente de revisión."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431857.pdf",
+      "sourceMatchId": "431857",
+      "occurredOn": "2026-02-01",
+      "opponent": "DESFASE FORASTERO",
+      "ownScore": 52,
+      "opponentScore": 40,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, lado y marcador; alta para nombres y dorsales; media para la transcripción de marcas P y baja para determinar si corresponden a participación o sanciones específicas.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "sin marcas visibles de participación o sanción"
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "marcas legibles en la tabla; naturaleza exacta pendiente de revisión"
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "marcas legibles en la tabla; naturaleza exacta pendiente de revisión"
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 4,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P",
+          "observation": "marcas legibles en la tabla; naturaleza exacta pendiente de revisión"
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "sin marcas visibles de participación o sanción"
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 9,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "sin marcas visibles de participación o sanción"
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ANGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 13,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "sin marcas visibles de participación o sanción"
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 4,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P P",
+          "observation": "marcas legibles en la tabla; naturaleza exacta pendiente de revisión"
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "sin marcas visibles de participación o sanción"
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "marca legible en la tabla; naturaleza exacta pendiente de revisión"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431859.pdf",
+      "sourceMatchId": "431859",
+      "occurredOn": "2026-02-08",
+      "opponent": "C.D. PEÑA LA KEKA",
+      "ownScore": 21,
+      "opponentScore": 49,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición A y marcador; media-alta para nombres y dorsales; media para la interpretación de las marcas P/T y baja para determinar cualquier sanción no claramente legible.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P",
+          "observation": "Marca legible en sanciones; participación con entrada marcada."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 5,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P T",
+          "observation": "Marcas legibles en sanciones; participación con entrada marcada."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca legible; participación con entrada marcada."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca legible; participación con entrada marcada."
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 14,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca legible; participación con entrada marcada."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "Marca legible; participación con entrada marcada."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción; pendiente de revisión."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marca legible de participación o sanción; pendiente de revisión."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431863.pdf",
+      "sourceMatchId": "431863",
+      "occurredOn": "2026-02-15",
+      "opponent": "FAFA BC",
+      "ownScore": 23,
+      "opponentScore": 28,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador y dorsales; media para la transcripción de nombres y marcas manuscritas de participación; no se observan sanciones legibles de Buyuyus.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 2,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "sin sanción legible"
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "sin sanción legible"
+        },
+        {
+          "rawName": "JIMENEZ GIL ADRIAN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P",
+          "observation": "marcas manuscritas de participación legibles; sin sanción legible"
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 17,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P P",
+          "observation": "marcas manuscritas de participación legibles; sin sanción legible"
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "sin sanción legible"
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ENGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 77,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P",
+          "observation": "sin sanción legible"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431870.pdf",
+      "sourceMatchId": "431870",
+      "occurredOn": "2026-02-22",
+      "opponent": "CARTUJA CITY CAMINOD VIVOS",
+      "ownScore": 43,
+      "opponentScore": 33,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición B y marcador final; media para la plantilla; baja para el detalle exacto de las casillas manuscritas de entradas y sanciones.",
+      "players": [
+        {
+          "rawName": "REINA PROY ALVARO",
+          "playerName": "REINA PROY, ÁLVARO",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "BAYO SANCHEZ MIGUEL ANGEL",
+          "playerName": "BAYO SÁNCHEZ, MIGUEL ÁNGEL",
+          "jerseyNumber": 10,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "GOTOR CRESPILLO ALVARO",
+          "playerName": "GOTOR CRESPILLO, ÁLVARO",
+          "jerseyNumber": 12,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Capitán; sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "BELTRAN GALAN ALFONSO CARLOS",
+          "playerName": "BELTRÁN GALÁN, ALFONSO CARLOS",
+          "jerseyNumber": 28,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada marcada",
+          "observation": "Sin sanción visible; detalle exacto de casillas pendiente de revisión."
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "sin marca de entrada legible",
+          "observation": "Participación pendiente de revisión; sin sanción visible."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431876.pdf",
+      "sourceMatchId": "431876",
+      "occurredOn": "2026-03-08",
+      "opponent": "D BAR N BAR",
+      "ownScore": 37,
+      "opponentScore": 50,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, marcador, lado y nombres/dorsales; media para la transcripción literal de las marcas manuscritas P/T; no se han estimado marcas ilegibles.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P P P",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P P",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "BAYO SANCHEZ MIGUEL ANGEL",
+          "playerName": "BAYO SÁNCHEZ, MIGUEL ÁNGEL",
+          "jerseyNumber": 10,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P T",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "RODRIGUEZ BENITEZ ANGEL ANTONIO",
+          "playerName": "RODRÍGUEZ BENITEZ, ÁNGEL ANTONIO",
+          "jerseyNumber": 13,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P T",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P P",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P P",
+          "observation": "sin observaciones adicionales legibles"
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "entrada X; sanciones P",
+          "observation": "incidencia legible: lesión del tobillo izquierdo en el minuto 9 del segundo cuarto"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431882.pdf",
+      "sourceMatchId": "431882",
+      "occurredOn": "2026-03-14",
+      "opponent": "AL PASO C B CAREBA",
+      "ownScore": 40,
+      "opponentScore": 21,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición B, marcador y nombres/dorsales; media para las marcas de sanción, cuyos códigos literales son legibles pero cuya correspondencia exacta requiere revisión.",
+      "players": [
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "T P P",
+          "observation": "Marcas legibles en sanciones; pendiente de revisión la interpretación exacta de los códigos."
+        },
+        {
+          "rawName": "JIMÉNEZ GIL ADRIÁN",
+          "playerName": "JIMÉNEZ GIL, ADRIÁN",
+          "jerseyNumber": 7,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marcas legibles en la tabla; el acta indica lesión en el minuto cinco del primer cuarto y que no pudo continuar."
+        },
+        {
+          "rawName": "SUAREZ RUFO ALBERTO",
+          "playerName": "SUÁREZ RUFO, ALBERTO",
+          "jerseyNumber": 8,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P",
+          "observation": "Marcas legibles en sanciones; pendiente de revisión la interpretación exacta de los códigos."
+        },
+        {
+          "rawName": "GOTOR CRESPILLO ALVARO",
+          "playerName": "GOTOR CRESPILLO, ÁLVARO",
+          "jerseyNumber": 12,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 1,
+          "sourceMarks": "U P T",
+          "observation": "Marcas legibles en sanciones; el acta indica descalificación por faltas técnica y antideportiva; pendiente de revisión la correspondencia exacta de cada código."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marcas legibles en la tabla."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "",
+          "observation": "Sin marcas legibles en la tabla."
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "P P T P",
+          "observation": "Marcas legibles en sanciones; pendiente de revisión la interpretación exacta de los códigos."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431885.pdf",
+      "sourceMatchId": "431885",
+      "occurredOn": "2026-03-22",
+      "opponent": "CB FLAMA",
+      "ownScore": 28,
+      "opponentScore": 42,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición A y marcador; alta para nombres, dorsales y cruces de entrada; media para las marcas manuscritas P/T, cuyo significado exacto queda pendiente de revisión.",
+      "players": [
+        {
+          "rawName": "GARCIA LINARES JAIME",
+          "playerName": "GARCÍA LINARES, JAIME",
+          "jerseyNumber": 3,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X",
+          "observation": "Entrada legible; sin sanción visible."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 5,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P T",
+          "observation": "Entrada y marcas P/T legibles; no se interpreta el significado de las marcas."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 1,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; T",
+          "observation": "Entrada y marca T legibles; no se interpreta el significado de la marca."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P",
+          "observation": "Entrada y dos marcas P legibles; no se interpreta el significado de las marcas."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P P",
+          "observation": "Capitán indicado con C; entrada y tres marcas P legibles; no se interpreta el significado de las marcas."
+        },
+        {
+          "rawName": "MALINE ALARCON ALEJANDRO",
+          "playerName": "MALINE ALARCÓN, ALEJANDRO",
+          "jerseyNumber": 32,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P P P",
+          "observation": "Entrada y tres marcas P legibles; no se interpreta el significado de las marcas."
+        },
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 37,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X",
+          "observation": "Entrada legible; sin sanción visible."
+        },
+        {
+          "rawName": "CERVANTES VARGAS SANTIAGO",
+          "playerName": "CERVANTES VARGAS, SANTIAGO",
+          "jerseyNumber": 99,
+          "played": true,
+          "fouls": 1,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "X; P",
+          "observation": "Entrada y marca P legibles; no se interpreta el significado de la marca."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431891.pdf",
+      "sourceMatchId": "431891",
+      "occurredOn": "2026-04-12",
+      "opponent": "CB MACASTA AZUL",
+      "ownScore": 39,
+      "opponentScore": 37,
+      "status": "completed",
+      "confidence": "Alta para identificador, fecha, equipos, condición B, marcador y dorsales; media para las marcas manuscritas, cuyo tipo de sanción queda pendiente de revisión.",
+      "players": [
+        {
+          "rawName": "GARCIA BARROSO JESUS",
+          "playerName": "GARCÍA BARROSO, JESÚS",
+          "jerseyNumber": 1,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones sin marca legible",
+          "observation": "Sin sanción legible."
+        },
+        {
+          "rawName": "MARTIN ARROYO DANIEL",
+          "playerName": "MARTÍN ARROYO, DANIEL",
+          "jerseyNumber": 6,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones P P P",
+          "observation": "Marcas visibles; no se interpreta el tipo de sanción."
+        },
+        {
+          "rawName": "BAYO SANCHEZ MIGUEL ANGEL",
+          "playerName": "BAYO SÁNCHEZ, MIGUEL ÁNGEL",
+          "jerseyNumber": 10,
+          "played": true,
+          "fouls": 0,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones sin marca legible",
+          "observation": "Sin sanción legible."
+        },
+        {
+          "rawName": "SÁNCHEZ PICHARDO JAIME ANTONIO",
+          "playerName": "SÁNCHEZ PICHARDO, JAIME ANTONIO",
+          "jerseyNumber": 14,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones P P",
+          "observation": "Marcas visibles; no se interpreta el tipo de sanción."
+        },
+        {
+          "rawName": "FERNANDEZ DIEGUEZ PABLO",
+          "playerName": "FERNÁNDEZ DIEGUEZ, PABLO",
+          "jerseyNumber": 15,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones P P",
+          "observation": "Marcas visibles; no se interpreta el tipo de sanción."
+        },
+        {
+          "rawName": "JIMENEZ LOPEZ REY ALVARO",
+          "playerName": "JIMENEZ LOPEZ REY ALVARO",
+          "jerseyNumber": 17,
+          "played": true,
+          "fouls": 2,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones P P",
+          "observation": "Marcas visibles; no se interpreta el tipo de sanción."
+        },
+        {
+          "rawName": "BLANCO GUZMÁN JUAN LUIS",
+          "playerName": "BLANCO GUZMÁN, JUAN LUIS",
+          "jerseyNumber": 22,
+          "played": true,
+          "fouls": 3,
+          "technicalFouls": 0,
+          "unsportsmanlikeFouls": 0,
+          "sourceMarks": "Entradas X X X X; sanciones P P P",
+          "observation": "Marcas visibles; no se interpreta el tipo de sanción."
+        }
+      ]
+    },
+    {
+      "sourceFile": "Acta_PartId_431896.pdf",
+      "sourceMatchId": "431896",
+      "occurredOn": "2026-04-19",
+      "opponent": "CD DABROWA",
+      "ownScore": null,
+      "opponentScore": null,
+      "status": "cancelled",
+      "confidence": "Alta para identificador, fecha, rival, condición A y suspensión; no consta marcador ni plantilla de Buyuyus, por lo que jugadores, participación y sanciones quedan pendientes de revisión.",
+      "players": []
+    }
+  ],
+  "reviewSummary": {
+    "actas": 18,
+    "completedMatches": 17,
+    "cancelledOrWithoutScore": [
+      {
+        "sourceMatchId": "431896",
+        "occurredOn": "2026-04-19",
+        "opponent": "CD DABROWA"
+      }
+    ],
+    "unmatchedPlayers": []
+  }
+}

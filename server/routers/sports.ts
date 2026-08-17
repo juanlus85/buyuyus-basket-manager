@@ -49,6 +49,47 @@ export function calculatePlayerSeasonStats(rows: Array<{ played: boolean; fouls:
   }, { played: 0, won: 0, lost: 0, fouls: 0, technicalFouls: 0, unsportsmanlikeFouls: 0 });
 }
 
+type TeamStatisticRow = {
+  playerId: number;
+  fullName: string;
+  shortName: string | null;
+  jerseyNumber: number | null;
+  matchId: number;
+  played: boolean;
+  fouls: number;
+  technicalFouls: number;
+  unsportsmanlikeFouls: number;
+  ownScore: number | null;
+  opponentScore: number | null;
+  status: "scheduled" | "completed" | "postponed" | "cancelled";
+};
+
+export function calculateTeamSeasonStatistics(rows: TeamStatisticRow[]) {
+  const grouped = new Map<number, { player: Pick<TeamStatisticRow, "playerId" | "fullName" | "shortName" | "jerseyNumber">; rows: TeamStatisticRow[] }>();
+  for (const row of rows) {
+    const current = grouped.get(row.playerId) ?? { player: { playerId: row.playerId, fullName: row.fullName, shortName: row.shortName, jerseyNumber: row.jerseyNumber }, rows: [] };
+    current.rows.push(row);
+    grouped.set(row.playerId, current);
+  }
+  const players = Array.from(grouped.values()).map(entry => ({
+    player: { id: entry.player.playerId, fullName: entry.player.fullName, shortName: entry.player.shortName, jerseyNumber: entry.player.jerseyNumber },
+    summary: calculatePlayerSeasonStats(entry.rows),
+  })).sort((a, b) => b.summary.played - a.summary.played || b.summary.won - a.summary.won || b.summary.fouls - a.summary.fouls || a.player.fullName.localeCompare(b.player.fullName, "es"));
+  return {
+    players,
+    summary: {
+      playersWithStats: players.length,
+      reportedMatches: new Set(rows.map(row => row.matchId)).size,
+      participations: players.reduce((total, item) => total + item.summary.played, 0),
+      won: players.reduce((total, item) => total + item.summary.won, 0),
+      lost: players.reduce((total, item) => total + item.summary.lost, 0),
+      fouls: players.reduce((total, item) => total + item.summary.fouls, 0),
+      technicalFouls: players.reduce((total, item) => total + item.summary.technicalFouls, 0),
+      unsportsmanlikeFouls: players.reduce((total, item) => total + item.summary.unsportsmanlikeFouls, 0),
+    },
+  };
+}
+
 export function summarizeAttendance(responses: Array<{ status: "going" | "maybe" | "not_going"; userId: number }>, userId: number) {
   return { going: responses.filter(item => item.status === "going").length, maybe: responses.filter(item => item.status === "maybe").length, notGoing: responses.filter(item => item.status === "not_going").length, mine: responses.find(item => item.userId === userId)?.status ?? null };
 }
@@ -262,6 +303,25 @@ export const sportRouter = router({
     const condition = input.seasonId ? and(eq(playerMatchStats.playerId, input.playerId), eq(teamEvents.seasonId, input.seasonId)) : eq(playerMatchStats.playerId, input.playerId);
     const rows = await db.select({ stat: playerMatchStats, match: matches, event: teamEvents }).from(playerMatchStats).innerJoin(matches, eq(playerMatchStats.matchId, matches.id)).innerJoin(teamEvents, eq(matches.eventId, teamEvents.id)).where(condition).orderBy(desc(teamEvents.startsAt));
     return { summary: calculatePlayerSeasonStats(rows.map(row => ({ ...row.stat, ownScore: row.match.ownScore, opponentScore: row.match.opponentScore, status: row.match.status }))), matches: rows };
+  }),
+
+  teamStatistics: protectedProcedure.input(z.object({ seasonId: z.number().int().positive() })).query(async ({ input }) => {
+    const db = await requireDb();
+    const rows = await db.select({
+      playerId: playerProfiles.id,
+      fullName: playerProfiles.fullName,
+      shortName: playerProfiles.shortName,
+      jerseyNumber: playerProfiles.jerseyNumber,
+      matchId: matches.id,
+      played: playerMatchStats.played,
+      fouls: playerMatchStats.fouls,
+      technicalFouls: playerMatchStats.technicalFouls,
+      unsportsmanlikeFouls: playerMatchStats.unsportsmanlikeFouls,
+      ownScore: matches.ownScore,
+      opponentScore: matches.opponentScore,
+      status: matches.status,
+    }).from(playerMatchStats).innerJoin(playerProfiles, eq(playerMatchStats.playerId, playerProfiles.id)).innerJoin(matches, eq(playerMatchStats.matchId, matches.id)).innerJoin(teamEvents, eq(matches.eventId, teamEvents.id)).where(eq(teamEvents.seasonId, input.seasonId));
+    return calculateTeamSeasonStatistics(rows);
   }),
 
   standings: protectedProcedure.input(z.object({ competitionId: z.number().int().positive() })).query(async ({ input }) => {

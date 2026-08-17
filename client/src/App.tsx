@@ -11,6 +11,7 @@ import InvitePage from "@/pages/InvitePage";
 import NotFound from "@/pages/NotFound";
 import PlayersPage from "@/pages/PlayersPage";
 import SportsPage from "@/pages/SportsPage";
+import StatisticsPage from "@/pages/StatisticsPage";
 import TeamPage from "@/pages/TeamPage";
 import TrainingPage from "@/pages/TrainingPage";
 import ResourcesPage from "@/pages/ResourcesPage";
@@ -32,6 +33,7 @@ function Router() {
         <Route path={"/entrenamientos"} component={TrainingPage} />
         <Route path={"/recursos"} component={ResourcesPage} />
         <Route path={"/competicion"} component={SportsPage} />
+        <Route path={"/estadisticas"} component={StatisticsPage} />
         <Route path={"/equipo"} component={TeamPage} />
         <Route path={"/importar"} component={ImportPage} />
         <Route path={"/importaciones"} component={ImportPage} />

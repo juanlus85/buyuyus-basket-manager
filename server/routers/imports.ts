@@ -70,6 +70,8 @@ const matchReportExtractionSchema = {
   additionalProperties: false,
 } as const;
 
+export const matchReportExtractionInstructions = "Analiza este acta de baloncesto. Extrae solo el rival, marcador de Buyuyus, marcador rival y, por cada jugador realmente identificable, participación, faltas, técnicas y antideportivas. Regla oficial de Buyuyus: todo jugador que figure en la lista del acta cuenta como participante, aunque no tenga una marca de entrada visible. Interpreta P como falta personal, T como falta técnica y U como falta antideportiva. Cuenta solo marcas realmente visibles; si una marca, nombre o cifra no es legible, usa 0 para ese campo e inclúyelo en warnings en vez de inventarlo. El resultado será un borrador para que administración lo asocie al partido y lo confirme.";
+
 function safeFilename(filename: string) {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 150) || "document";
 }
@@ -123,7 +125,7 @@ export const importRouter = router({
             },
             {
               role: "user",
-              content: [{ type: "text", text: input.type === "match_report" ? "Analiza este acta de baloncesto. Extrae solo el rival, marcador de Buyuyus, marcador rival y, por cada jugador realmente identificable, participación, faltas, técnicas y antideportivas. No inventes nombres ni cifras: usa null o warnings si algo no es legible. El resultado será un borrador para que administración lo asocie al partido y lo confirme." : `Analiza este documento para el destino ${input.type}. Extrae los posibles eventos, partidos, filas de clasificación o movimientos financieros. No guardes nada automáticamente: la respuesta será un borrador de revisión.` }, ...source],
+              content: [{ type: "text", text: input.type === "match_report" ? matchReportExtractionInstructions : `Analiza este documento para el destino ${input.type}. Extrae los posibles eventos, partidos, filas de clasificación o movimientos financieros. No guardes nada automáticamente: la respuesta será un borrador de revisión.` }, ...source],
             },
           ],
           response_format: { type: "json_schema", json_schema: { name: input.type === "match_report" ? "basketball_match_report" : "team_document_extraction", strict: true, schema: input.type === "match_report" ? matchReportExtractionSchema : extractionSchema } },
