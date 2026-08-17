@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PaymentComment } from "../client/src/components/PaymentComment";
-import { canRecordAdminPayment, habitualMovementMode, prepareHabitualMovement, visiblePaymentComment } from "../client/src/lib/financePresentation";
+import { canRecordAdminPayment, habitualMovementMode, keepsHabitualFeePresetOnPlayerChange, prepareHabitualMovement, visiblePaymentComment } from "../client/src/lib/financePresentation";
 
 describe("presentación de contabilidad", () => {
   it("prepara Invitado Entreno como ingreso de 3 € y muestra su concepto", () => {
@@ -12,6 +12,11 @@ describe("presentación de contabilidad", () => {
   it("dirige Cuota de jugador al formulario que solicita Quién paga", () => {
     expect(habitualMovementMode("Cuota de jugador")).toBe("payment");
     expect(habitualMovementMode("Arbitraje")).toBe("movement");
+  });
+
+  it("conserva el concepto y el importe de Cuota de jugador al elegir pagador", () => {
+    expect(keepsHabitualFeePresetOnPlayerChange(true)).toBe(true);
+    expect(keepsHabitualFeePresetOnPlayerChange(false)).toBe(false);
   });
 
   it("convierte una nota guardada en el texto visible del historial", () => {

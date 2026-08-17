@@ -4,8 +4,9 @@ import userEvent from "@testing-library/user-event";
 import React, { useState } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { AdminPaymentSubmitButton } from "../client/src/pages/FinancesPage";
+import { AdminPaymentForm } from "../client/src/components/AdminPaymentForm";
 import { PaymentComment } from "../client/src/components/PaymentComment";
-import { prepareHabitualMovement } from "../client/src/lib/financePresentation";
+import { habitualMovementMode, keepsHabitualFeePresetOnPlayerChange, prepareHabitualMovement } from "../client/src/lib/financePresentation";
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -29,6 +30,29 @@ function FinanceFlowHarness() {
   </div>;
 }
 
+function PlayerFeePresetHarness() {
+  const [playerId, setPlayerId] = useState("none");
+  const [concept, setConcept] = useState("");
+  const [amount, setAmount] = useState("");
+  const [preserveFeePreset, setPreserveFeePreset] = useState(false);
+  const chooseHabitualFee = () => {
+    const prepared = prepareHabitualMovement({ defaultAmountCents: 6000, defaultAccountId: null, defaultConcept: "Cuota de jugador", direction: "income" });
+    if (habitualMovementMode("Cuota de jugador") === "payment") {
+      setConcept(prepared.concept);
+      setAmount(prepared.amount);
+      setPreserveFeePreset(true);
+    }
+  };
+  const choosePlayer = (value: string) => {
+    setPlayerId(value);
+    if (!keepsHabitualFeePresetOnPlayerChange(preserveFeePreset)) {
+      setConcept("");
+      setAmount("");
+    }
+  };
+  return <div><button onClick={chooseHabitualFee}>Cuota de jugador</button><label>Quién paga<select aria-label="Quién paga" value={playerId} onChange={(event) => choosePlayer(event.target.value)}><option value="none">Sin asignar</option><option value="8">Jugador Uno</option></select></label><label>Concepto de nueva cuota<input aria-label="Concepto de nueva cuota" value={concept} readOnly /></label><label>Importe<input aria-label="Importe" value={amount} readOnly /></label></div>;
+}
+
 describe("arnés de flujo contable", () => {
   it("muestra comentarios en historial administrativo y vista de jugador, y precarga Invitado Entreno de 3 € desde el selector", async () => {
     const user = userEvent.setup();
@@ -48,5 +72,22 @@ describe("arnés de flujo contable", () => {
     await user.selectOptions(screen.getByLabelText("Cuota"), "15");
     await user.selectOptions(screen.getByLabelText("Caja"), "3");
     expect(screen.getByRole("button", { name: "Confirmar y descontar deuda" })).toHaveProperty("disabled", false);
+  });
+
+  it("mantiene concepto e importe al seleccionar Quién paga desde Cuota de jugador", async () => {
+    const user = userEvent.setup();
+    render(<PlayerFeePresetHarness />);
+    await user.click(screen.getByRole("button", { name: "Cuota de jugador" }));
+    await user.selectOptions(screen.getByLabelText("Quién paga"), "8");
+    expect(screen.getByLabelText("Concepto de nueva cuota")).toHaveProperty("value", "Cuota de jugador");
+    expect(screen.getByLabelText("Importe")).toHaveProperty("value", "60");
+  });
+
+  it("conserva el valor precargado en el formulario real Registrar cobro", async () => {
+    const user = userEvent.setup();
+    render(<AdminPaymentForm players={[{ player: { id: 8, fullName: "Jugador Uno", status: "active", isActiveCurrentSeason: true } }]} charges={[]} accounts={[{ account: { id: 3, name: "Caja Juanlu", isActive: true } }]} initialConcept="Cuota de jugador" initialAmount="60" preserveInitialFee={true} pending={false} onCancel={() => undefined} onSubmit={() => undefined} />);
+    await user.selectOptions(screen.getByLabelText("Quién paga"), "8");
+    expect(screen.getByLabelText("Concepto de nueva cuota")).toHaveProperty("value", "Cuota de jugador");
+    expect(screen.getByLabelText("Importe")).toHaveProperty("value", "60");
   });
 });

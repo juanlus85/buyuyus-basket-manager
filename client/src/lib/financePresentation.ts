@@ -25,3 +25,7 @@ export function canRecordAdminPayment(input: { playerId: string; chargeId: strin
 export function habitualMovementMode(templateName: string) {
   return templateName === "Cuota de jugador" ? "payment" : "movement";
 }
+
+export function keepsHabitualFeePresetOnPlayerChange(fromHabitualFee: boolean) {
+  return fromHabitualFee;
+}

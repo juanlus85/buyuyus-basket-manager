@@ -139,3 +139,7 @@
 - [x] Añadir una prueba de regresión que confirme que Cuota de jugador abre el formulario Registrar cobro con Quién paga.
 - [x] Capturar visualmente el formulario Registrar cobro mostrando Quién paga tras acceder desde Cuota de jugador.
 - [x] Documentar la comprobación visual del acceso Cuota de jugador en el expediente de verificación.
+- [x] Conservar concepto e importe de Cuota de jugador al seleccionar Quién paga si no se elige una cuota pendiente.
+- [x] Añadir una prueba de regresión para evitar que la selección de jugador borre los valores precargados.
+- [x] Añadir prueba de componente de Cuota de jugador que seleccione Quién paga y conserve concepto e importe visibles.
+- [x] Extraer el formulario real Registrar cobro a un componente reutilizable y probar que conserva concepto e importe al elegir Quién paga.
