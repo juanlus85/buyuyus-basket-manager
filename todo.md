@@ -148,3 +148,6 @@
 - [x] Habilitar la apertura de ficha de jugador desde Plantilla con movimientos, cuotas, pagos y saldo individual.
 - [x] Añadir pruebas y verificación visual de la ficha de movimientos del jugador.
 - [x] Añadir prueba del procedimiento administrativo de movimientos por jugador que devuelva cuotas, pagos y saldo individual.
+- [x] Revisar el estado de Git, los archivos ignorados y la documentación de instalación antes de exportar el proyecto.
+- [ ] Crear un repositorio privado en GitHub y subir el código, migraciones y guía de VPS.
+- [ ] Entregar la URL privada y los pasos de clonación e instalación en el servidor.
