@@ -154,6 +154,30 @@
 - [x] Explicar y validar la carga segura de DATABASE_URL al ejecutar Drizzle por SSH en Plesk.
 - [x] Confirmar el comando de migración y reinicio sin exponer credenciales en terminal ni capturas.
 - [x] Guiar la lectura directa en DATABASE_URL y su exportación en la misma sesión SSH antes de ejecutar Drizzle.
-- [ ] Determinar y documentar el comando seguro para crear o recuperar el primer administrador local en el VPS.
+- [x] Determinar y documentar el comando seguro para crear o recuperar el primer administrador local en el VPS.
 - [ ] Verificar el inicio de sesión local y recomendar cambio de contraseña tras el primer acceso.
-- [ ] Añadir un script CLI seguro para crear o actualizar el administrador local inicial cuando la base de datos esté vacía.
+- [x] Añadir un script CLI seguro para crear o actualizar el administrador local inicial cuando la base de datos esté vacía.
+- [ ] Preparar un hash bcrypt y SQL idempotente para crear o actualizar el administrador local desde MySQL.
+- [x] Preparar SQL idempotente para crear o actualizar los 15 jugadores activos aportados, sin cargos ni pagos.
+- [x] Verificar que la carga de los 15 perfiles no crea cargos, pagos ni deudas históricas por jugador.
+- [ ] Documentar la verificación de la plantilla después de ejecutar la carga en MySQL.
+- [x] Normalizar los movimientos finales aportados de 2025–2026 y cuadrar el saldo de cierre de 98,33 €.
+- [x] Preparar la creación de Caja Juanlu como caja operativa y Caja Maline con saldo inicial cero.
+- [x] Preparar SQL auditable para gastos, ingresos por cuota y notas de movimientos en Caja Juanlu.
+- [x] Registrar los ingresos de cuota históricos como movimientos globales sin jugador asociado ni efecto sobre deudas individuales.
+- [ ] Solicitar confirmación explícita antes de aplicar los movimientos financieros a la base de datos del usuario.
+- [x] Extraer del PDF los resultados definitivos y la clasificación de la jornada 17 de 2025–2026.
+- [x] Contrastar los partidos extraídos con el histórico deportivo existente y resolver cualquier discrepancia.
+- [x] Preparar una carga idempotente de resultados y clasificación final sin duplicar partidos.
+- [ ] Solicitar confirmación antes de aplicar la actualización deportiva en el VPS y verificar la tabla final.
+- [x] Verificar la configuración, conexión y autenticación SMTP sin enviar correo de prueba.
+- [ ] Diagnosticar por qué una invitación creada no ha llegado al destinatario.
+- [ ] Comprobar en registros de producción el resultado del envío SMTP y posibles rechazos de entrega.
+- [ ] Corregir el flujo de invitación o de correo identificado y añadir una prueba de regresión.
+- [ ] Reenviar la invitación únicamente tras revisión y confirmación del administrador.
+- [ ] Sustituir la aceptación de invitación basada en OAuth por un alta con usuario y contraseña local.
+- [ ] Enviar el enlace de invitación por SMTP y mostrar el estado de aceptación del servidor de correo.
+- [x] Diagnosticar la falta de entrega de credenciales enviada desde Alta directa.
+- [x] Incluir https://buyuyus.blancoguzman.es en el correo de credenciales locales.
+- [x] Conservar y mostrar el identificador y los destinatarios aceptados o rechazados por SMTP.
+- [ ] Reenviar las credenciales solo después de que el administrador lo confirme.

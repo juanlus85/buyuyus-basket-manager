@@ -48,15 +48,27 @@ export const localUserRouter = router({
       const { playerProfiles } = await import("../../drizzle/schema");
       await db.update(playerProfiles).set({ userId: id, updatedAt: new Date() }).where(eq(playerProfiles.id, input.playerId));
     }
-    await sendAccountCredentials({ recipient: input.email, name: input.name, username: input.username, password: input.password, mustChangePassword: true });
-    return { id, emailSent: true };
+    try {
+      const delivery = await sendAccountCredentials({ recipient: input.email, name: input.name, username: input.username, password: input.password, mustChangePassword: true });
+      const emailSent = delivery.accepted.some(recipient => recipient.toLowerCase() === input.email.toLowerCase()) && delivery.rejected.length === 0;
+      return { id, emailSent, delivery };
+    } catch (error) {
+      console.error("[localUsers.create] SMTP delivery failed", error);
+      return { id, emailSent: false, delivery: null };
+    }
   }),
   resetCredentials: adminProcedure.input(z.object({ id: z.number().int().positive(), password })).mutation(async ({ input }) => {
     const db = await requireDb();
     const [user] = await db.select().from(users).where(eq(users.id, input.id)).limit(1);
     if (!user?.email || !user.username) throw new TRPCError({ code: "BAD_REQUEST", message: "El usuario debe tener correo y nombre de usuario local." });
     await db.update(users).set({ passwordHash: await bcrypt.hash(input.password, 12), mustChangePassword: true, updatedAt: new Date() }).where(eq(users.id, input.id));
-    await sendAccountCredentials({ recipient: user.email, name: user.name ?? user.username, username: user.username, password: input.password, mustChangePassword: true });
-    return { success: true };
+    try {
+      const delivery = await sendAccountCredentials({ recipient: user.email, name: user.name ?? user.username, username: user.username, password: input.password, mustChangePassword: true });
+      const emailSent = delivery.accepted.some(recipient => recipient.toLowerCase() === user.email!.toLowerCase()) && delivery.rejected.length === 0;
+      return { success: true, emailSent, delivery };
+    } catch (error) {
+      console.error("[localUsers.resetCredentials] SMTP delivery failed", error);
+      return { success: true, emailSent: false, delivery: null };
+    }
   }),
 });

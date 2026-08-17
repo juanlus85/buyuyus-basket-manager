@@ -18,14 +18,27 @@ describe("localUsers.create", () => {
     const insertedValues = vi.fn().mockResolvedValue([{ insertId: 8 }]);
     const db = { select: vi.fn().mockReturnValue({ from: () => ({ where: () => ({ limit: async () => [] }) }) }), insert: vi.fn().mockReturnValue({ values: insertedValues }) };
     vi.mocked(requireDb).mockResolvedValue(db as never);
-    vi.mocked(sendAccountCredentials).mockResolvedValue(undefined);
+    vi.mocked(sendAccountCredentials).mockResolvedValue({ messageId: "message-123", accepted: ["laura@example.com"], rejected: [], response: "250 Accepted" });
 
-    await appRouter.createCaller(adminContext).localUsers.create({ name: "Laura Prado", email: "laura@example.com", username: "laura.prado", password: "Temporal-2026!", role: "user", playerId: null });
+    const result = await appRouter.createCaller(adminContext).localUsers.create({ name: "Laura Prado", email: "laura@example.com", username: "laura.prado", password: "Temporal-2026!", role: "user", playerId: null });
 
     const record = insertedValues.mock.calls[0]?.[0];
     expect(record.username).toBe("laura.prado");
     expect(record.passwordHash).not.toBe("Temporal-2026!");
     await expect(bcrypt.compare("Temporal-2026!", record.passwordHash)).resolves.toBe(true);
     expect(sendAccountCredentials).toHaveBeenCalledWith(expect.objectContaining({ recipient: "laura@example.com", username: "laura.prado", password: "Temporal-2026!" }));
+    expect(result).toMatchObject({ id: 8, emailSent: true, delivery: { messageId: "message-123", accepted: ["laura@example.com"] } });
+  });
+
+  it("conserva el usuario y comunica que no hubo confirmación cuando SMTP falla", async () => {
+    const insertedValues = vi.fn().mockResolvedValue([{ insertId: 9 }]);
+    const db = { select: vi.fn().mockReturnValue({ from: () => ({ where: () => ({ limit: async () => [] }) }) }), insert: vi.fn().mockReturnValue({ values: insertedValues }) };
+    vi.mocked(requireDb).mockResolvedValue(db as never);
+    vi.mocked(sendAccountCredentials).mockRejectedValue(new Error("SMTP rejected recipient"));
+
+    const result = await appRouter.createCaller(adminContext).localUsers.create({ name: "Mario Rey", email: "mario@example.com", username: "mario.rey", password: "Temporal-2026!", role: "user", playerId: null });
+
+    expect(result).toEqual({ id: 9, emailSent: false, delivery: null });
+    expect(insertedValues).toHaveBeenCalledTimes(1);
   });
 });

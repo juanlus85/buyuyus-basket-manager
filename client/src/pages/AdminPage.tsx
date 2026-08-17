@@ -28,7 +28,7 @@ function AdminWorkspace() {
   const invites = trpc.invites.list.useQuery();
   const createInvite = trpc.invites.create.useMutation({ onSuccess: () => { utils.invites.list.invalidate(); toast.success("Invitación creada. Comparte el enlace con el jugador."); } });
   const revokeInvite = trpc.invites.revoke.useMutation({ onSuccess: () => { utils.invites.list.invalidate(); toast.success("Invitación revocada."); } });
-  const createLocalUser = trpc.localUsers.create.useMutation({ onSuccess: () => { utils.userManagement.invalidate(); toast.success("Usuario creado y credenciales enviadas por correo."); } });
+  const createLocalUser = trpc.localUsers.create.useMutation({ onSuccess: result => { utils.userManagement.invalidate(); if (result.emailSent) { toast.success(`Usuario creado. SMTP aceptó el correo (${result.delivery?.messageId ?? "sin identificador"}).`); } else { toast.warning("El usuario se ha creado, pero SMTP no confirmó la entrega. Revisa correo no deseado o reenvía las credenciales."); } } });
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState("");
   const [editingUser, setEditingUser] = useState<UserEditor | null>(null);
