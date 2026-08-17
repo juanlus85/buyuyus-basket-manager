@@ -151,3 +151,9 @@
 - [x] Revisar el estado de Git, los archivos ignorados y la documentación de instalación antes de exportar el proyecto.
 - [x] Crear un repositorio privado en GitHub y subir el código, migraciones y guía de VPS.
 - [x] Entregar la URL privada y los pasos de clonación e instalación en el servidor.
+- [x] Explicar y validar la carga segura de DATABASE_URL al ejecutar Drizzle por SSH en Plesk.
+- [x] Confirmar el comando de migración y reinicio sin exponer credenciales en terminal ni capturas.
+- [x] Guiar la lectura directa en DATABASE_URL y su exportación en la misma sesión SSH antes de ejecutar Drizzle.
+- [ ] Determinar y documentar el comando seguro para crear o recuperar el primer administrador local en el VPS.
+- [ ] Verificar el inicio de sesión local y recomendar cambio de contraseña tras el primer acceso.
+- [ ] Añadir un script CLI seguro para crear o actualizar el administrador local inicial cuando la base de datos esté vacía.
