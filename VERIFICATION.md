@@ -15,3 +15,17 @@ La pantalla de Plantilla muestra la plantilla activa con 15 jugadores, controles
 ## Resumen responsive
 
 La revisión del resumen con tarjetas vacías confirma una composición estable en escritorio y en un viewport móvil de 375 × 812 px. Las tarjetas **Siguiente partido** y **Próximo entrenamiento** conservan una altura mínima uniforme, texto centrado verticalmente y una separación visible respecto a las métricas inferiores; no se solapan ni se tocan entre filas.
+
+## Cobros asignados e invitados de entrenamiento
+
+El formulario **Registrar cobro** exige un jugador y una caja. Si el jugador ya tiene una cuota abierta, el cobro se vincula a ella; si todavía no existe un vencimiento abierto, se habilita la creación explícita de una cuota individual con concepto e importe antes de confirmar el cobro. En la temporada activa no había cuotas abiertas con las que ejecutar un movimiento financiero real, por lo que no se introdujo ninguna transacción de prueba en las cajas del equipo.
+
+Las pruebas automatizadas verifican la creación del cargo individual, la aplicación del pago contra el cargo y su trazabilidad en el historial. Para **Invitado Entreno**, el sistema exige un nombre, lo almacena como `Invitado: <nombre>` y lo recupera en el historial de Cuentas.
+
+El usuario ha confirmado que el flujo de **Invitado Entreno** funciona correctamente en datos reales.
+
+## Acceso de Cuota de jugador
+
+La verificación visual de **Cuentas** confirma que el movimiento habitual **Cuota de jugador** abre el formulario **Registrar cobro**. El primer campo visible es **Quién paga**; la cuota se elige después y, si no existen cuotas abiertas, se muestra la alternativa de crear una cuota individual mediante su concepto.
+
+La comprobación se realizó en la ruta `/cuentas?modo=cobro`, donde el selector **Quién paga** queda visible antes del selector **Cuota o cargo pendiente**.

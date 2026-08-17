@@ -134,3 +134,8 @@
 - [x] Añadir prueba de accountHistory que confirme que el nombre del invitado es visible en el movimiento Invitado Entreno.
 - [ ] Verificar en una transacción persistida que un cobro individual reduce la deuda del jugador y aparece en el historial.
 - [ ] Documentar la comprobación final del flujo Registrar cobro en el expediente de verificación.
+- [x] Localizar y corregir el botón o formulario de Cuota de jugador que omite el selector Quién paga.
+- [x] Verificar visualmente que cualquier acceso a Registrar cobro muestra el selector de jugador antes de la cuota.
+- [x] Añadir una prueba de regresión que confirme que Cuota de jugador abre el formulario Registrar cobro con Quién paga.
+- [x] Capturar visualmente el formulario Registrar cobro mostrando Quién paga tras acceder desde Cuota de jugador.
+- [x] Documentar la comprobación visual del acceso Cuota de jugador en el expediente de verificación.

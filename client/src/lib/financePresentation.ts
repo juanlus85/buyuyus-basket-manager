@@ -21,3 +21,7 @@ export function visiblePaymentComment(note: string | null | undefined) {
 export function canRecordAdminPayment(input: { playerId: string; chargeId: string; accountId: string; manualConcept?: string }) {
   return input.playerId !== "none" && input.accountId !== "none" && (input.chargeId !== "none" || Boolean(input.manualConcept?.trim()));
 }
+
+export function habitualMovementMode(templateName: string) {
+  return templateName === "Cuota de jugador" ? "payment" : "movement";
+}
