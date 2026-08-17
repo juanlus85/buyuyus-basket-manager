@@ -8,4 +8,12 @@ describe("acceso local exclusivo", () => {
     expect(layout).not.toContain("Acceso con cuenta Manus");
     expect(layout).not.toContain("startLogin");
   });
+
+  it("ofrece un reenvío confirmado de credenciales para cuentas locales", () => {
+    const adminPage = readFileSync(new URL("../client/src/pages/AdminPage.tsx", import.meta.url), "utf8");
+    expect(adminPage).toContain("Reenviar acceso");
+    expect(adminPage).toContain("resetCredentials.mutateAsync");
+    expect(adminPage).toContain("Contraseña temporal nueva");
+    expect(adminPage).toContain("Restablecer y enviar");
+  });
 });

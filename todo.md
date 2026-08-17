@@ -180,4 +180,4 @@
 - [x] Diagnosticar la falta de entrega de credenciales enviada desde Alta directa.
 - [x] Incluir https://buyuyus.blancoguzman.es en el correo de credenciales locales.
 - [x] Conservar y mostrar el identificador y los destinatarios aceptados o rechazados por SMTP.
-- [ ] Reenviar las credenciales solo después de que el administrador lo confirme.
+- [x] Reenviar las credenciales solo después de que el administrador lo confirme.

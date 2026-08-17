@@ -3,6 +3,7 @@ import { AdminOnly } from "@/components/AdminOnly";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { shortDate } from "@/lib/format";
@@ -16,6 +17,7 @@ export default function AdminPage() {
 }
 
 type UserEditor = { id: number; name: string; email: string };
+type CredentialResetTarget = { id: number; name: string; email: string; username: string };
 
 function AdminWorkspace() {
   const utils = trpc.useUtils();
@@ -29,6 +31,7 @@ function AdminWorkspace() {
   const createInvite = trpc.invites.create.useMutation({ onSuccess: () => { utils.invites.list.invalidate(); toast.success("Invitación creada. Comparte el enlace con el jugador."); } });
   const revokeInvite = trpc.invites.revoke.useMutation({ onSuccess: () => { utils.invites.list.invalidate(); toast.success("Invitación revocada."); } });
   const createLocalUser = trpc.localUsers.create.useMutation({ onSuccess: result => { utils.userManagement.invalidate(); if (result.emailSent) { toast.success(`Usuario creado. SMTP aceptó el correo (${result.delivery?.messageId ?? "sin identificador"}).`); } else { toast.warning("El usuario se ha creado, pero SMTP no confirmó la entrega. Revisa correo no deseado o reenvía las credenciales."); } } });
+  const resetCredentials = trpc.localUsers.resetCredentials.useMutation({ onSuccess: result => { if (result.emailSent) { toast.success(`Credenciales restablecidas. SMTP aceptó el correo (${result.delivery?.messageId ?? "sin identificador"}).`); } else { toast.warning("La contraseña se ha restablecido, pero SMTP no confirmó la entrega. Comparte la contraseña temporal por un canal seguro."); } utils.userManagement.invalidate(); setCredentialResetTarget(null); setResetPassword(""); } });
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState("");
   const [editingUser, setEditingUser] = useState<UserEditor | null>(null);
@@ -36,6 +39,8 @@ function AdminWorkspace() {
   const [invitePlayer, setInvitePlayer] = useState("");
   const [inviteUrl, setInviteUrl] = useState("");
   const [localName, setLocalName] = useState(""); const [localEmail, setLocalEmail] = useState(""); const [localUsername, setLocalUsername] = useState(""); const [localPassword, setLocalPassword] = useState(""); const [localRole, setLocalRole] = useState<"user" | "admin">("user"); const [localPlayer, setLocalPlayer] = useState("");
+  const [credentialResetTarget, setCredentialResetTarget] = useState<CredentialResetTarget | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
   const saveIdentity = async (event: FormEvent) => {
     event.preventDefault();
     if (!editingUser) return;
@@ -50,9 +55,23 @@ function AdminWorkspace() {
     setInvitePlayer("");
   };
   const createAccount = async (event: FormEvent) => { event.preventDefault(); await createLocalUser.mutateAsync({ name: localName, email: localEmail, username: localUsername.toLowerCase(), password: localPassword, role: localRole, playerId: localPlayer ? Number(localPlayer) : null }); setLocalName(""); setLocalEmail(""); setLocalUsername(""); setLocalPassword(""); setLocalPlayer(""); };
+  const resendAccess = async (event: FormEvent) => { event.preventDefault(); if (!credentialResetTarget) return; await resetCredentials.mutateAsync({ id: credentialResetTarget.id, password: resetPassword }); };
 
   return (
     <div>
+      <Dialog open={Boolean(credentialResetTarget)} onOpenChange={open => { if (!open) { setCredentialResetTarget(null); setResetPassword(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reenviar acceso</DialogTitle>
+            <DialogDescription>Se sustituirá la contraseña actual por una contraseña temporal y se enviará a {credentialResetTarget?.email}. Confirma esta acción con una nueva contraseña temporal.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={resendAccess} className="space-y-4">
+            <div className="grid gap-2"><span className="text-sm font-medium">Usuario</span><Input value={credentialResetTarget?.username ?? ""} disabled className="rounded-xl" /></div>
+            <div className="grid gap-2"><span className="text-sm font-medium">Contraseña temporal nueva</span><Input value={resetPassword} onChange={event => setResetPassword(event.target.value)} type="password" minLength={10} autoComplete="new-password" placeholder="Mínimo 10 caracteres" required className="rounded-xl" /></div>
+            <div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => { setCredentialResetTarget(null); setResetPassword(""); }} className="rounded-xl">Cancelar</Button><Button type="submit" disabled={resetCredentials.isPending || resetPassword.length < 10} className="rounded-xl">{resetCredentials.isPending ? "Restableciendo…" : "Restablecer y enviar"}</Button></div>
+          </form>
+        </DialogContent>
+      </Dialog>
       <PageHeader eyebrow="Administración" title="La estructura del equipo." description="Gestiona los accesos de usuarios y vincula las fichas de jugador a sus cuentas de acceso." />
       <form onSubmit={createAccount} className="paper-card mb-6 p-6"><p className="eyebrow">Alta directa</p><h2 className="display-face mt-1 text-3xl">Crear usuario y enviar acceso</h2><p className="mt-2 text-sm text-muted-foreground">Se crea un usuario local, se vincula a una ficha opcional y se envían sus credenciales temporales por correo SMTP.</p><div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-6"><Input value={localName} onChange={event => setLocalName(event.target.value)} placeholder="Nombre completo" required className="rounded-xl" /><Input value={localEmail} onChange={event => setLocalEmail(event.target.value)} type="email" placeholder="correo@ejemplo.com" required className="rounded-xl" /><Input value={localUsername} onChange={event => setLocalUsername(event.target.value)} placeholder="Usuario" required className="rounded-xl" /><Input value={localPassword} onChange={event => setLocalPassword(event.target.value)} type="password" placeholder="Contraseña temporal" minLength={10} required className="rounded-xl" /><Select value={localRole} onValueChange={value => setLocalRole(value as "user" | "admin")}><SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="user">Jugador</SelectItem><SelectItem value="admin">Administrador</SelectItem></SelectContent></Select><Select value={localPlayer || "none"} onValueChange={value => setLocalPlayer(value === "none" ? "" : value)}><SelectTrigger className="rounded-xl"><SelectValue placeholder="Ficha opcional" /></SelectTrigger><SelectContent><SelectItem value="none">Sin ficha</SelectItem>{unlinked.data?.map(player => <SelectItem key={player.id} value={String(player.id)}>{player.fullName}</SelectItem>)}</SelectContent></Select></div><div className="mt-4 flex justify-end"><Button type="submit" disabled={createLocalUser.isPending} className="rounded-xl">{createLocalUser.isPending ? "Creando y enviando…" : "Crear y enviar credenciales"}</Button></div></form>
       {editingUser ? <form onSubmit={saveIdentity} className="paper-card mb-6 grid gap-4 p-5 md:grid-cols-[1fr_1fr_auto]"><Input value={editingUser.name} onChange={event => setEditingUser({ ...editingUser, name: event.target.value })} placeholder="Nombre de usuario" className="rounded-xl" /><Input value={editingUser.email} onChange={event => setEditingUser({ ...editingUser, email: event.target.value })} placeholder="Correo de usuario" type="email" className="rounded-xl" /><div className="flex gap-2"><Button type="button" variant="ghost" onClick={() => setEditingUser(null)} className="rounded-xl">Cancelar</Button><Button type="submit" className="rounded-xl">Guardar datos</Button></div></form> : null}
@@ -62,7 +81,7 @@ function AdminWorkspace() {
           <div className="divide-y divide-border/70">
             {users.data?.length ? users.data.map(item => <div key={item.id} className={`flex flex-wrap items-center justify-between gap-3 px-6 py-4 ${item.isActive ? "" : "bg-stone-100/60 opacity-70"}`}>
               <div><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{item.name || item.email || "Usuario sin nombre"}</p><Badge className={item.role === "admin" ? "bg-violet-100 text-violet-800 hover:bg-violet-100" : "bg-sky-100 text-sky-800 hover:bg-sky-100"}>{item.role === "admin" ? "Administrador" : "Jugador"}</Badge><Badge variant="secondary">{item.isActive ? "Activo" : "Baja"}</Badge></div><p className="mt-1 text-xs text-muted-foreground">{item.username ? `Usuario: ${item.username} · ` : ""}{item.playerName ? `Ficha: ${item.playerName}` : "Sin ficha vinculada"} · Último acceso {shortDate(item.lastSignedIn)}</p></div>
-              <div className="flex flex-wrap items-center gap-2"><Select value={item.role} onValueChange={value => setRole.mutate({ userId: item.id, role: value as "admin" | "user" })}><SelectTrigger className="w-36 rounded-xl"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="user">Jugador</SelectItem><SelectItem value="admin">Administrador</SelectItem></SelectContent></Select><Button onClick={() => setEditingUser({ id: item.id, name: item.name ?? "", email: item.email ?? "" })} variant="outline" size="sm" className="rounded-lg">Editar</Button><Button onClick={() => setActive.mutate({ userId: item.id, isActive: !item.isActive })} variant="ghost" size="sm" className="rounded-lg">{item.isActive ? "Dar de baja" : "Reactivar"}</Button></div>
+              <div className="flex flex-wrap items-center gap-2"><Select value={item.role} onValueChange={value => setRole.mutate({ userId: item.id, role: value as "admin" | "user" })}><SelectTrigger className="w-36 rounded-xl"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="user">Jugador</SelectItem><SelectItem value="admin">Administrador</SelectItem></SelectContent></Select><Button onClick={() => setEditingUser({ id: item.id, name: item.name ?? "", email: item.email ?? "" })} variant="outline" size="sm" className="rounded-lg">Editar</Button>{item.username && item.email ? <Button onClick={() => setCredentialResetTarget({ id: item.id, name: item.name ?? item.username!, email: item.email!, username: item.username! })} variant="outline" size="sm" className="rounded-lg">Reenviar acceso</Button> : null}<Button onClick={() => setActive.mutate({ userId: item.id, isActive: !item.isActive })} variant="ghost" size="sm" className="rounded-lg">{item.isActive ? "Dar de baja" : "Reactivar"}</Button></div>
             </div>) : <p className="p-7 text-sm text-muted-foreground">Los usuarios aparecen cuando inician sesión por primera vez; crea antes su ficha de jugador y vincúlala aquí.</p>}
           </div>
         </article>
