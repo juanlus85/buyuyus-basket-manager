@@ -95,6 +95,18 @@ export const financeRouter = router({
     return { player, charges, payments, summary: calculateStatement(charges, payments) };
   }),
 
+  adminPlayerStatement: adminProcedure.input(z.object({ playerId: z.number().int().positive(), seasonId: optionalId })).query(async ({ input }) => {
+    await materializeDueCharges();
+    const db = await requireDb();
+    const [player] = await db.select().from(playerProfiles).where(eq(playerProfiles.id, input.playerId)).limit(1);
+    if (!player) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el jugador." });
+    const seasonId = input.seasonId ?? await getActiveSeasonId();
+    const chargeFilter = seasonId ? and(eq(playerCharges.playerId, player.id), eq(playerCharges.seasonId, seasonId)) : eq(playerCharges.playerId, player.id);
+    const paymentFilter = seasonId ? and(eq(playerPayments.playerId, player.id), eq(playerPayments.seasonId, seasonId)) : eq(playerPayments.playerId, player.id);
+    const [charges, payments] = await Promise.all([db.select().from(playerCharges).where(chargeFilter).orderBy(desc(playerCharges.dueAt)), db.select().from(playerPayments).where(paymentFilter).orderBy(desc(playerPayments.paidAt))]);
+    return { player, charges, payments, summary: calculateStatement(charges, payments) };
+  }),
+
   submitPayment: protectedProcedure.input(z.object({ amountCents: moneyCents, paidAt: z.date(), method: paymentMethod, chargeId: optionalId, seasonId: optionalId, concept: z.string().trim().max(180).nullable().optional(), playerNote: z.string().trim().max(2000).nullable().optional(), proofKey: z.string().max(512).nullable().optional(), proofUrl: z.string().max(1024).nullable().optional() })).mutation(async ({ ctx, input }) => {
     const { db, player } = await getCurrentPlayer(ctx.user.id);
     if (player.status !== "active") throw new TRPCError({ code: "FORBIDDEN", message: "Una ficha de baja no puede registrar nuevos pagos." });

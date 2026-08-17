@@ -95,3 +95,16 @@ describe("finance.accountHistory", () => {
     expect(entries).toEqual([expect.objectContaining({ source: "movement", concept: "Invitado Entreno", notes: "Invitado: Marta López" })]);
   });
 });
+
+describe("finance.adminPlayerStatement", () => {
+  it("devuelve cuotas, pagos y saldo para la ficha administrativa del jugador", async () => {
+    const dueEmpty: any = { from: () => dueEmpty, innerJoin: () => dueEmpty, where: async () => [] };
+    const player = { id: 8, fullName: "Jugador Uno", status: "active", isActiveCurrentSeason: true };
+    const charge = { id: 15, playerId: 8, seasonId: 4, concept: "Cuota de liga", amountCents: 6000, status: "open", dueAt: new Date("2026-09-01") };
+    const payment = { id: 90, playerId: 8, seasonId: 4, amountCents: 2000, status: "confirmed", paidAt: new Date("2026-09-02"), concept: "Cuota de liga" };
+    const db = { select: vi.fn().mockReturnValueOnce(dueEmpty).mockReturnValueOnce(limited([player])).mockReturnValueOnce(ordered([charge])).mockReturnValueOnce(ordered([payment])) };
+    vi.mocked(requireDb).mockResolvedValue(db as never);
+    const result = await appRouter.createCaller(adminContext).finance.adminPlayerStatement({ playerId: 8, seasonId: 4 });
+    expect(result).toMatchObject({ player: { id: 8 }, charges: [expect.objectContaining({ id: 15 })], payments: [expect.objectContaining({ id: 90 })], summary: { chargedCents: 6000, confirmedCents: 2000, balanceCents: 4000 } });
+  });
+});

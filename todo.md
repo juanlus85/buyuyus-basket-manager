@@ -132,8 +132,8 @@
 - [x] Mostrar un estado vacío explícito cuando el jugador seleccionado no tenga cuotas abiertas y distinguir la creación de cuota individual.
 - [x] Verificar con un flujo o consulta real que un cobro confirmado reduce el saldo del jugador correcto y aparece en su historial.
 - [x] Añadir prueba de accountHistory que confirme que el nombre del invitado es visible en el movimiento Invitado Entreno.
-- [ ] Verificar en una transacción persistida que un cobro individual reduce la deuda del jugador y aparece en el historial.
-- [ ] Documentar la comprobación final del flujo Registrar cobro en el expediente de verificación.
+- [x] Verificar en una transacción persistida que un cobro individual reduce la deuda del jugador y aparece en el historial.
+- [x] Documentar la comprobación final del flujo Registrar cobro en el expediente de verificación.
 - [x] Localizar y corregir el botón o formulario de Cuota de jugador que omite el selector Quién paga.
 - [x] Verificar visualmente que cualquier acceso a Registrar cobro muestra el selector de jugador antes de la cuota.
 - [x] Añadir una prueba de regresión que confirme que Cuota de jugador abre el formulario Registrar cobro con Quién paga.
@@ -143,3 +143,8 @@
 - [x] Añadir una prueba de regresión para evitar que la selección de jugador borre los valores precargados.
 - [x] Añadir prueba de componente de Cuota de jugador que seleccione Quién paga y conserve concepto e importe visibles.
 - [x] Extraer el formulario real Registrar cobro a un componente reutilizable y probar que conserva concepto e importe al elegir Quién paga.
+- [x] Eliminar el límite del resumen Quién debe para mostrar todos los jugadores con saldo pendiente.
+- [x] Verificar visualmente la lista completa y su legibilidad cuando haya muchos jugadores.
+- [x] Habilitar la apertura de ficha de jugador desde Plantilla con movimientos, cuotas, pagos y saldo individual.
+- [x] Añadir pruebas y verificación visual de la ficha de movimientos del jugador.
+- [x] Añadir prueba del procedimiento administrativo de movimientos por jugador que devuelva cuotas, pagos y saldo individual.

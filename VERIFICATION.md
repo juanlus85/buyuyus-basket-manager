@@ -29,3 +29,5 @@ El usuario ha confirmado que el flujo de **Invitado Entreno** funciona correctam
 La verificación visual de **Cuentas** confirma que el movimiento habitual **Cuota de jugador** abre el formulario **Registrar cobro**. El primer campo visible es **Quién paga**; la cuota se elige después y, si no existen cuotas abiertas, se muestra la alternativa de crear una cuota individual mediante su concepto.
 
 La comprobación se realizó en la ruta `/cuentas?modo=cobro`, donde el selector **Quién paga** queda visible antes del selector **Cuota o cargo pendiente**.
+
+El usuario confirmó después la prueba persistida: al seleccionar el jugador, el concepto e importe de la cuota individual se conservaron y el cobro pudo registrarse correctamente en el flujo real.
