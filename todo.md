@@ -189,3 +189,7 @@
 - [x] Añadir una comprobación SMTP segura ejecutada desde el proceso Node.js de Plesk y visible para administradores.
 - [x] Corregir la separación y alineación de las tarjetas Mi estado de cuenta y En la agenda para perfiles de usuario.
 - [x] Verificar visualmente la cuadrícula de tarjetas de usuario en escritorio y móvil.
+- [ ] Actualizar el VPS a la versión que contiene la corrección visual del panel de usuario.
+- [ ] Verificar con una cuenta de usuario que las tarjetas aparecen separadas y alineadas tras el reinicio.
+- [x] Preparar SQL idempotente para cargar los movimientos habituales sin crear movimientos financieros reales.
+- [x] Verificar y entregar el SQL de movimientos habituales para ejecución en MySQL.
