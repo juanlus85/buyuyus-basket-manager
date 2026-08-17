@@ -71,14 +71,14 @@ export default function DashboardPage() {
           </section>
         </>
       ) : (
-        <section className="grid gap-5 lg:grid-cols-[1fr_.9fr]">
-          <article className="relative overflow-hidden rounded-3xl bg-sidebar p-7 text-sidebar-foreground shadow-xl sm:p-9">
+        <section className="mt-5 grid items-stretch gap-5 lg:grid-cols-2">
+          <article className="relative min-h-[208px] overflow-hidden rounded-3xl bg-sidebar p-7 text-sidebar-foreground shadow-xl sm:p-9">
             <div className="absolute -right-8 -top-10 h-40 w-40 rounded-full border-[18px] border-sky-300/15" />
             <p className="eyebrow text-sky-200">Mi estado de cuenta</p>
             {mine.isLoading ? <Skeleton className="mt-5 h-12 w-44 bg-white/10" /> : <><p className="mt-4 text-5xl font-semibold tracking-tight">{euro(mine.data?.summary.balanceCents ?? 0)}</p><p className="mt-2 text-sm text-sky-100/70">{(mine.data?.summary.balanceCents ?? 0) > 0 ? "Saldo pendiente de abonar." : "No tienes deuda pendiente."}</p></>}
             <Link href="/cuentas" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-sidebar hover:bg-sky-50">Gestionar pagos <CircleDollarSign className="h-4 w-4" /></Link>
           </article>
-          <article className="paper-card p-7"><p className="eyebrow">Próximamente</p><h2 className="display-face mt-1 text-3xl">En la agenda</h2><div className="mt-5 space-y-3">{upcoming.length ? upcoming.slice(0, 3).map(row => <div key={row.event.id} className="rounded-xl bg-secondary/70 px-4 py-3"><p className="text-sm font-semibold">{row.event.title}</p><p className="mt-1 text-xs text-muted-foreground">{dateTime(row.event.startsAt)}</p></div>) : <p className="text-sm text-muted-foreground">No hay eventos próximos.</p>}</div></article>
+          <article className="paper-card flex min-h-[208px] flex-col p-7"><p className="eyebrow">Próximamente</p><h2 className="display-face mt-1 text-3xl">En la agenda</h2><div className="mt-5 space-y-3">{upcoming.length ? upcoming.slice(0, 3).map(row => <div key={row.event.id} className="rounded-xl bg-secondary/70 px-4 py-3"><p className="text-sm font-semibold">{row.event.title}</p><p className="mt-1 text-xs text-muted-foreground">{dateTime(row.event.startsAt)}</p></div>) : <p className="text-sm text-muted-foreground">No hay eventos próximos.</p>}</div></article>
         </section>
       )}
 

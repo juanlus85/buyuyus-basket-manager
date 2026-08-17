@@ -187,3 +187,5 @@
 - [ ] Corregir la configuración SMTP de Plesk según el error de conexión, autenticación o remitente detectado.
 - [ ] Confirmar una entrega SMTP aceptada mediante un reenvío controlado.
 - [x] Añadir una comprobación SMTP segura ejecutada desde el proceso Node.js de Plesk y visible para administradores.
+- [x] Corregir la separación y alineación de las tarjetas Mi estado de cuenta y En la agenda para perfiles de usuario.
+- [x] Verificar visualmente la cuadrícula de tarjetas de usuario en escritorio y móvil.
