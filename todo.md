@@ -201,3 +201,8 @@
 - [x] Confirmar la regla de actas: jugador listado equivale a partido disputado; P, T y U equivalen a falta personal, técnica y antideportiva.
 - [x] Incorporar estas reglas al extractor de próximas actas con revisión administrativa obligatoria.
 - [ ] Crear una ficha histórica inactiva para Alfonso Carlos Beltrán Galán y vincular sus actas de 2025–2026.
+- [ ] Ejecutar el SQL aprobado de estadísticas históricas 2025–2026 en el VPS y verificar sus totales.
+- [ ] Diagnosticar por qué las estadísticas históricas ejecutadas en el VPS no aparecen en la sección Estadísticas.
+- [ ] Desbloquear build-info.ts y actualizar el VPS desde 3a71653 a 5fe4586 antes de verificar el menú Estadísticas.
+- [x] Permitir ordenar la tabla de Estadísticas por jugador, PJ, PG, PP, faltas, técnicas y antideportivas.
+- [x] Calcular y permitir ordenar por faltas por partido jugado en Estadísticas.

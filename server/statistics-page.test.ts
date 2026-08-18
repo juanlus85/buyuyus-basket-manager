@@ -8,5 +8,10 @@ describe("página de estadísticas", () => {
     expect(page).toContain("Partidos jugados");
     expect(page).toContain("Antideportivas");
     expect(page).toContain("BarChart");
+    expect(page).toContain("SortableHeader");
+    expect(page).toContain("toggleTableSort");
+    expect(page).toContain("aria-sort");
+    expect(page).toContain("foulsPerGame");
+    expect(page).toContain("F/PJ");
   });
 });
