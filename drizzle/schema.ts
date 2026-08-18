@@ -391,6 +391,59 @@ export const competitionStandings = mysqlTable(
   })
 );
 
+/** Configuration required to locate the public IMD competition for one tracked Buyuyus competition. */
+export const imdSyncConfigs = mysqlTable(
+  "imdSyncConfigs",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    seasonId: int("seasonId").notNull().references(() => seasons.id, { onDelete: "cascade" }),
+    competitionId: int("competitionId").notNull().references(() => competitions.id, { onDelete: "cascade" }),
+    portalCompetition: varchar("portalCompetition", { length: 180 }),
+    teamSearch: varchar("teamSearch", { length: 120 }).default("BUYUYUS").notNull(),
+    portalTeamId: varchar("portalTeamId", { length: 80 }),
+    portalGroup: varchar("portalGroup", { length: 80 }),
+    isActive: boolean("isActive").default(true).notNull(),
+    lastProvisionalAt: timestamp("lastProvisionalAt"),
+    lastFinalAt: timestamp("lastFinalAt"),
+    createdByUserId: int("createdByUserId").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    imdConfigCompetitionUnique: uniqueIndex("imd_config_competition_unique").on(table.competitionId),
+    imdConfigSeasonIndex: index("imd_config_season_index").on(table.seasonId, table.isActive),
+  })
+);
+
+/** Public IMD snapshots are staged here and require an administrator to apply or discard them. */
+export const imdSyncDrafts = mysqlTable(
+  "imdSyncDrafts",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    configId: int("configId").notNull().references(() => imdSyncConfigs.id, { onDelete: "cascade" }),
+    mode: mysqlEnum("mode", ["provisional", "final"]).notNull(),
+    status: mysqlEnum("status", ["pending", "applied", "discarded", "unchanged", "failed"]).default("pending").notNull(),
+    sourceUrl: varchar("sourceUrl", { length: 2048 }).notNull(),
+    portalCompetition: varchar("portalCompetition", { length: 180 }),
+    portalTeamId: varchar("portalTeamId", { length: 80 }),
+    portalGroup: varchar("portalGroup", { length: 80 }),
+    classificationData: json("classificationData"),
+    resultsData: json("resultsData"),
+    changesData: json("changesData"),
+    sourceRetrievedAt: timestamp("sourceRetrievedAt").defaultNow().notNull(),
+    errorMessage: text("errorMessage"),
+    reviewedByUserId: int("reviewedByUserId").references(() => users.id, { onDelete: "set null" }),
+    reviewedAt: timestamp("reviewedAt"),
+    appliedAt: timestamp("appliedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    imdDraftConfigStatusIndex: index("imd_draft_config_status_index").on(table.configId, table.status, table.createdAt),
+    imdDraftRetrievedIndex: index("imd_draft_retrieved_index").on(table.sourceRetrievedAt),
+  })
+);
+
 export const teamAnnouncements = mysqlTable(
   "teamAnnouncements",
   {

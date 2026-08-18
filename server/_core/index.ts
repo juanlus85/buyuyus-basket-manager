@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { runActiveImdSyncs } from "../imdSyncService";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,6 +37,19 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  app.post("/api/scheduled/imd-sync", async (req, res) => {
+    const secret = process.env.IMD_SYNC_CRON_SECRET;
+    if (!secret || req.header("x-imd-sync-secret") !== secret) return res.status(401).json({ error: "unauthorized" });
+    const mode = req.body?.mode;
+    if (mode !== "provisional" && mode !== "final") return res.status(400).json({ error: "invalid_mode" });
+    try {
+      const drafts = await runActiveImdSyncs(mode);
+      return res.json({ ok: true, mode, drafts, timestamp: new Date().toISOString() });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error desconocido en la sincronización IMD.";
+      return res.status(500).json({ error: message, timestamp: new Date().toISOString() });
+    }
+  });
   // tRPC API
   app.use(
     "/api/trpc",

@@ -209,3 +209,9 @@
 - [x] Calcular y permitir ordenar por faltas por partido jugado en Estadísticas.
 - [x] Sustituir el balance agregado por jugadores por el balance real de partidos del equipo en Estadísticas.
 - [x] Calcular y permitir ordenar por porcentaje de partidos ganados y perdidos de cada jugador.
+- [x] Diseñar una sincronización semanal de resultados y clasificación desde el portal público del IMD.
+- [x] Mantener una revisión administrativa de cambios detectados antes de aplicarlos a partidos y clasificación.
+- [x] Mostrar en una bandeja los borradores provisionales y definitivos del IMD, con acciones Confirmar cambios y Descartar borrador.
+- [ ] Programar y verificar una actualización de prueba para la nueva temporada.
+- [ ] Ejecutar una consulta provisional del IMD cada martes y una consulta definitiva cada jueves.
+- [ ] Detectar automáticamente el equipo Buyuyus, la competición y el grupo de cada temporada antes de consultar datos.

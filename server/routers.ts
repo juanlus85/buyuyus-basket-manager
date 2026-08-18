@@ -10,6 +10,7 @@ import { announcementRouter } from "./routers/collaboration";
 import { sportRouter } from "./routers/sports";
 import { localAuthRouter, localUserRouter } from "./routers/localAuth";
 import { resourceRouter } from "./routers/resources";
+import { imdSyncRouter } from "./routers/imdSync";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -34,6 +35,7 @@ export const appRouter = router({
   announcements: announcementRouter,
   imports: importRouter,
   invites: inviteRouter,
+  imdSync: imdSyncRouter,
 });
 
 export type AppRouter = typeof appRouter;
