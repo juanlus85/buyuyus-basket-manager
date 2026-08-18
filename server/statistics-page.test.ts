@@ -13,5 +13,9 @@ describe("página de estadísticas", () => {
     expect(page).toContain("aria-sort");
     expect(page).toContain("foulsPerGame");
     expect(page).toContain("F/PJ");
+    expect(page).toContain("wonPercentage");
+    expect(page).toContain("lostPercentage");
+    expect(page).toContain("%PG");
+    expect(page).toContain("%PP");
   });
 });
