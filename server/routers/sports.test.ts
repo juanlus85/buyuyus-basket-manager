@@ -35,7 +35,7 @@ describe("calculateTeamSeasonStatistics", () => {
       { playerId: 1, fullName: "Ana Base", shortName: "Ana", jerseyNumber: 4, matchId: 11, played: true, fouls: 1, technicalFouls: 0, unsportsmanlikeFouls: 0, ownScore: 48, opponentScore: 52, status: "completed" },
       { playerId: 2, fullName: "Beto Alero", shortName: null, jerseyNumber: 7, matchId: 10, played: true, fouls: 3, technicalFouls: 0, unsportsmanlikeFouls: 1, ownScore: 61, opponentScore: 55, status: "completed" },
     ]);
-    expect(result.summary).toEqual({ playersWithStats: 2, reportedMatches: 2, participations: 3, won: 2, lost: 1, fouls: 6, technicalFouls: 1, unsportsmanlikeFouls: 1 });
+    expect(result.summary).toEqual({ playersWithStats: 2, reportedMatches: 2, participations: 3, teamPlayed: 2, teamWon: 1, teamLost: 1, fouls: 6, technicalFouls: 1, unsportsmanlikeFouls: 1 });
     expect(result.players[0]).toMatchObject({ player: { id: 1, fullName: "Ana Base" }, summary: { played: 2, won: 1, lost: 1, fouls: 3 } });
   });
 });

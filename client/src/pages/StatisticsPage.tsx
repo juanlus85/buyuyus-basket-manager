@@ -64,7 +64,7 @@ export default function StatisticsPage() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <SummaryCard icon={Trophy} label="Actas confirmadas" value={summary.reportedMatches} hint="Partidos con datos individuales" tone="sky" />
         <SummaryCard icon={UsersRound} label="Participaciones" value={summary.participations} hint={`${summary.playersWithStats} jugadores con estadísticas`} tone="emerald" />
-        <SummaryCard icon={Award} label="Balance individual" value={`${summary.won}–${summary.lost}`} hint="Victorias y derrotas con participación" tone="amber" />
+        <SummaryCard icon={Award} label="Balance del equipo" value={`${summary.teamWon}–${summary.teamLost}`} hint={`${summary.teamPlayed} partidos finalizados`} tone="amber" />
         <SummaryCard icon={ShieldAlert} label="Faltas acumuladas" value={summary.fouls} hint={`${summary.technicalFouls} técnicas · ${summary.unsportsmanlikeFouls} antideportivas`} tone="rose" />
       </section>
 

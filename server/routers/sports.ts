@@ -75,14 +75,16 @@ export function calculateTeamSeasonStatistics(rows: TeamStatisticRow[]) {
     player: { id: entry.player.playerId, fullName: entry.player.fullName, shortName: entry.player.shortName, jerseyNumber: entry.player.jerseyNumber },
     summary: calculatePlayerSeasonStats(entry.rows),
   })).sort((a, b) => b.summary.played - a.summary.played || b.summary.won - a.summary.won || b.summary.fouls - a.summary.fouls || a.player.fullName.localeCompare(b.player.fullName, "es"));
+  const uniqueCompletedMatches = Array.from(new Map(rows.filter(row => row.status === "completed" && row.ownScore !== null && row.opponentScore !== null).map(row => [row.matchId, row])).values());
   return {
     players,
     summary: {
       playersWithStats: players.length,
       reportedMatches: new Set(rows.map(row => row.matchId)).size,
       participations: players.reduce((total, item) => total + item.summary.played, 0),
-      won: players.reduce((total, item) => total + item.summary.won, 0),
-      lost: players.reduce((total, item) => total + item.summary.lost, 0),
+      teamPlayed: uniqueCompletedMatches.length,
+      teamWon: uniqueCompletedMatches.filter(match => match.ownScore! > match.opponentScore!).length,
+      teamLost: uniqueCompletedMatches.filter(match => match.ownScore! < match.opponentScore!).length,
       fouls: players.reduce((total, item) => total + item.summary.fouls, 0),
       technicalFouls: players.reduce((total, item) => total + item.summary.technicalFouls, 0),
       unsportsmanlikeFouls: players.reduce((total, item) => total + item.summary.unsportsmanlikeFouls, 0),

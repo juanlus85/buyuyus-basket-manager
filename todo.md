@@ -206,3 +206,4 @@
 - [ ] Desbloquear build-info.ts y actualizar el VPS desde 3a71653 a 5fe4586 antes de verificar el menú Estadísticas.
 - [x] Permitir ordenar la tabla de Estadísticas por jugador, PJ, PG, PP, faltas, técnicas y antideportivas.
 - [x] Calcular y permitir ordenar por faltas por partido jugado en Estadísticas.
+- [x] Sustituir el balance agregado por jugadores por el balance real de partidos del equipo en Estadísticas.
