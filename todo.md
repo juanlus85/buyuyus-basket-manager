@@ -182,7 +182,7 @@
 - [x] Conservar y mostrar el identificador y los destinatarios aceptados o rechazados por SMTP.
 - [x] Reenviar las credenciales solo después de que el administrador lo confirme.
 - [ ] Guardar temporalmente el build-info.ts generado en el VPS y sincronizar la versión corregida desde origin/main.
-- [ ] Excluir build-info.ts del control de Git para evitar bloqueos recurrentes de actualización en Plesk.
+- [x] Excluir build-info.ts del control de Git para evitar bloqueos recurrentes de actualización en Plesk.
 - [ ] Compilar y reiniciar la aplicación actualizada antes de probar el envío de credenciales.
 - [x] Capturar el error SMTP exacto generado en producción al reenviar credenciales: variables SMTP ausentes en el VPS.
 - [ ] Corregir la configuración SMTP de Plesk según el error de conexión, autenticación o remitente detectado.
