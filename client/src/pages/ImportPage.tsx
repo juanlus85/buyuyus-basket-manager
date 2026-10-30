@@ -21,9 +21,9 @@ function ImportWorkspace() {
   const report = useMemo(() => result && "match" in result && "playerStats" in result ? result as MatchReportResult : null, [result]);
   const uploadFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]; if (!file) return;
-    const isPdf = file.type === "application/pdf"; const isImage = file.type.startsWith("image/"); if (!isPdf && !isImage) return toast.error("Selecciona una imagen o un PDF."); if (file.size > 15 * 1024 * 1024) return toast.error("El documento supera el límite de 15 MB.");
+    const isPdf = file.type === "application/pdf" || file.name.toLocaleLowerCase().endsWith(".pdf"); const isImage = !isPdf && file.type.startsWith("image/"); if (!isPdf && !isImage) return toast.error("Selecciona una imagen o un PDF."); if (file.size > 15 * 1024 * 1024) return toast.error("El documento supera el límite de 15 MB.");
     setFilename(file.name); const base64 = await readBase64(file);
-    try { const response = await upload.mutateAsync({ type, sourceKind: isPdf ? "pdf" : "image", originalFilename: file.name, mimeType: file.type, base64 }); setResult(response.result as ExtractionResult | MatchReportResult); setJobId(response.id); setMatchId("none"); toast.success("Borrador extraído. Revísalo antes de registrar datos."); } catch { toast.error("No se ha podido extraer el documento."); }
+    try { const response = await upload.mutateAsync({ type, sourceKind: isPdf ? "pdf" : "image", originalFilename: file.name, mimeType: isPdf ? "application/pdf" : file.type, base64 }); setResult(response.result as ExtractionResult | MatchReportResult); setJobId(response.id); setMatchId("none"); toast.success("Borrador extraído. Revísalo antes de registrar datos."); } catch (error) { toast.error(error instanceof Error ? error.message : "No se ha podido extraer el documento."); }
     event.target.value = "";
   };
   return <div><PageHeader eyebrow="Importación asistida" title="Del documento al borrador." description="Sube una imagen o PDF de un acta, clasificación, calendario o cuenta. La extracción es un borrador que requiere revisión antes de crear registros." />
