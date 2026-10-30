@@ -215,3 +215,4 @@
 - [ ] Programar y verificar una actualización de prueba para la nueva temporada.
 - [ ] Ejecutar una consulta provisional del IMD cada martes y una consulta definitiva cada jueves.
 - [ ] Detectar automáticamente el equipo Buyuyus, la competición y el grupo de cada temporada antes de consultar datos.
+- [x] Corregir la importación de calendarios PDF con texto seleccionable, filtrar las 18 jornadas de Buyuyus y conservar un borrador revisable sin alta automática.
