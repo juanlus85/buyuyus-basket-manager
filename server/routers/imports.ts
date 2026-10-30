@@ -91,8 +91,15 @@ export function buildDocumentExtractionPrompt(type: z.infer<typeof importType>) 
 }
 
 export function prepareCalendarPdfText(text: string) {
-  const teamFixtureLines = text.split(/\r?\n/).map(line => line.trim()).filter(line => /\bBUYUYUS\b/i.test(line) && /\b\d{2}-\d{2}-\d{4}\b/.test(line));
-  return teamFixtureLines.length ? teamFixtureLines.join("\n") : text;
+  const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  // The deterministic parser needs the league roster to map team IDs/names to
+  // fixture rows. Keep those directory rows as well as Buyuyus fixtures, while
+  // dropping unrelated matches and personal contact rows from the PDF.
+  const rosterLine = /^\d+\s+\d+\s+[A-Z]\s+.+\s+(?:NERVION|MACARENA|CERRO|ESTE)\b/i;
+  const buyuyusFixtureLine = /\bBUYUYUS\b/i;
+  const fixtureDate = /\b\d{2}-\d{2}-\d{4}\b/;
+  const relevantLines = lines.filter(line => rosterLine.test(line) || (buyuyusFixtureLine.test(line) && fixtureDate.test(line)));
+  return relevantLines.length ? relevantLines.join("\n") : text;
 }
 
 export const importRouter = router({
@@ -140,12 +147,23 @@ export const importRouter = router({
       });
       const id = Number(insert.insertId);
 
+      const deterministicCalendarDraft = input.type === "calendar" && pdfText ? extractBuyuyusCalendarDraft(pdfText) : null;
+      if (deterministicCalendarDraft) {
+        await db.update(importJobs).set({ status: "ready_for_review", extractedData: deterministicCalendarDraft, extractionNote: deterministicCalendarDraft.documentSummary, updatedAt: new Date() }).where(eq(importJobs.id, id));
+        return { id, fileUrl: stored.url, status: "ready_for_review" as const, result: deterministicCalendarDraft };
+      }
+
+      // On the VPS, text-based calendar PDFs should not silently depend on an
+      // OpenAI key when local parsing cannot recognize the source layout.
+      if (input.type === "calendar" && input.sourceKind === "pdf" && !process.env.OPENAI_API_KEY) {
+        const message = pdfText
+          ? "El PDF contiene texto, pero no se reconocieron sus filas de equipos y partidos Buyuyus. No se ha llamado a IA; revisa que sea un calendario de liga con la cabecera de equipos y las jornadas visibles."
+          : "No se pudo extraer texto seleccionable del PDF. Puede ser un documento escaneado; vuelve a exportarlo con texto seleccionable o sube una imagen legible. No se ha llamado a IA.";
+        await db.update(importJobs).set({ status: "failed", extractionNote: message, updatedAt: new Date() }).where(eq(importJobs.id, id));
+        throw new TRPCError({ code: "BAD_REQUEST", message: `El documento se guardó, pero ${message}` });
+      }
+
       try {
-        const deterministicCalendarDraft = input.type === "calendar" && pdfText ? extractBuyuyusCalendarDraft(pdfText) : null;
-        if (deterministicCalendarDraft) {
-          await db.update(importJobs).set({ status: "ready_for_review", extractedData: deterministicCalendarDraft, extractionNote: deterministicCalendarDraft.documentSummary, updatedAt: new Date() }).where(eq(importJobs.id, id));
-          return { id, fileUrl: stored.url, status: "ready_for_review" as const, result: deterministicCalendarDraft };
-        }
         const signedUrl = input.sourceKind === "image" || !pdfText ? await storageGetSignedUrl(stored.key) : "";
         const models = await listLLMModels();
         const model = models.data.find(item => item.id.startsWith("gemini-3-flash"))?.id ?? models.data.find(item => item.id.startsWith("gpt-5-mini"))?.id;
