@@ -10,6 +10,11 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { runActiveImdSyncs } from "../imdSyncService";
 
+// Change this marker with every deployment-diagnostics release. It lets the
+// VPS owner verify that Plesk is reaching this exact Node process without
+// revealing configuration, user data, or secrets.
+const DEPLOYMENT_MARKER = "buyuyus-plesk-health-20261030-2113";
+
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -35,6 +40,16 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  app.get("/api/health", (_req, res) => {
+    res.set({ "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" });
+    res.status(200).json({
+      ok: true,
+      service: "Buyuyus Basket Manager",
+      release: DEPLOYMENT_MARKER,
+      runtime: { node: process.version, environment: process.env.NODE_ENV ?? "unset" },
+    });
+  });
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   app.post("/api/scheduled/imd-sync", async (req, res) => {

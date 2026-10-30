@@ -217,3 +217,4 @@
 - [ ] Detectar automáticamente el equipo Buyuyus, la competición y el grupo de cada temporada antes de consultar datos.
 - [x] Corregir la importación de calendarios PDF con texto seleccionable mediante parser local: filtra las 18 jornadas de Buyuyus, no depende de IA en el VPS y conserva un borrador revisable sin alta automática.
 - [x] Eliminar la dependencia obligatoria de BUILT_IN_FORGE_API_URL y BUILT_IN_FORGE_API_KEY en Plesk: guardar archivos en disco local y exigir autenticación y permisos para descargarlos.
+- [x] Añadir una ruta de salud pública y segura que permita identificar desde Plesk la versión de Node realmente activa antes de iniciar sesión.
