@@ -2,7 +2,7 @@
 
 Esta aplicación se ejecuta como un servicio **Node.js** con una base de datos compatible con **MySQL 8**. La configuración indicada a continuación está pensada para un servidor con Plesk, acceso SSH y Node.js 23.11.1, como el servidor previsto para `buyuyus.blancoguzman.es`.
 
-> La aplicación utiliza autenticación OAuth y servicios de almacenamiento e importación asistida configurables mediante variables de entorno. Antes de publicar, deben sustituirse por credenciales reales y válidas del proveedor elegido. No se deben utilizar los valores de ejemplo ni copiar secretos al repositorio.
+> En Plesk, las fotos, los documentos y los PDFs se guardan en disco local y no requieren claves de Manus/Forge. El almacenamiento gestionado de Forge solo se usa cuando la aplicación sí se ejecuta dentro de WebDev y sus credenciales están disponibles.
 
 ## 1. Preparar el subdominio y la base de datos
 
@@ -18,7 +18,7 @@ En Plesk, cree el subdominio `buyuyus.blancoguzman.es` y active un certificado T
 
 ## 2. Copiar el proyecto y configurar el entorno
 
-Desde el directorio de la aplicación en el VPS, copie el código fuente y cree el archivo `.env` a partir de `.env.production.example`. Ajuste como mínimo `DATABASE_URL`, `JWT_SECRET`, las variables de OAuth y las credenciales de almacenamiento e IA.
+Desde el directorio de la aplicación en el VPS, copie el código fuente y cree el archivo `.env` a partir de `.env.production.example`. Configure `DATABASE_URL` y `JWT_SECRET`; las claves de almacenamiento Forge no son necesarias en Plesk.
 
 ```bash
 cp .env.production.example .env
@@ -61,6 +61,8 @@ pnpm test
 
 En el panel de Node.js de Plesk, indique el directorio raíz del proyecto y configure `dist/index.js` como archivo de inicio. Use `NODE_ENV=production` y deje que Plesk asigne el puerto mediante la variable `PORT`; la aplicación no debe llevar un puerto fijo configurado.
 
+Los archivos subidos se guardan por defecto en `storage/uploads/`, dentro del directorio del proyecto y fuera de `dist/public`. El servidor crea las carpetas necesarias al recibir la primera subida. Si el directorio del proyecto no es escribible por el usuario Node.js de Plesk, defina `FILE_STORAGE_DIR` en Plesk con una ruta absoluta privada y escribible; no use `httpdocs`, `public` ni otra ruta que exponga el contenido directamente. Las descargas se sirven a través de la aplicación con sesión y permisos.
+
 El comando equivalente si se gestiona el proceso por SSH es el siguiente:
 
 ```bash
@@ -77,7 +79,7 @@ La base de datos contiene información de equipo y movimientos económicos. Prog
 |---|---|
 | MySQL | Copia diaria y prueba periódica de restauración |
 | `.env` | Copia cifrada y fuera del repositorio |
-| Almacenamiento de archivos | Fotos, justificantes e importaciones |
+| Almacenamiento de archivos | El directorio `storage/uploads/` o la ruta `FILE_STORAGE_DIR` configurada en Plesk |
 | Código | Repositorio privado o archivo de versión firmado |
 
 ## 6. Actualizar la aplicación
