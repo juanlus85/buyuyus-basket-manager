@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { importJobs } from "../../drizzle/schema";
 import { requireDb } from "../db";
+import { extractBuyuyusCalendarDraft } from "../calendarImport";
 import { invokeLLM, listLLMModels } from "../_core/llm";
 import { extractPdfText } from "../pdfText";
 import { storageGetSignedUrl, storagePut } from "../storage";
@@ -140,6 +141,11 @@ export const importRouter = router({
       const id = Number(insert.insertId);
 
       try {
+        const deterministicCalendarDraft = input.type === "calendar" && pdfText ? extractBuyuyusCalendarDraft(pdfText) : null;
+        if (deterministicCalendarDraft) {
+          await db.update(importJobs).set({ status: "ready_for_review", extractedData: deterministicCalendarDraft, extractionNote: deterministicCalendarDraft.documentSummary, updatedAt: new Date() }).where(eq(importJobs.id, id));
+          return { id, fileUrl: stored.url, status: "ready_for_review" as const, result: deterministicCalendarDraft };
+        }
         const signedUrl = input.sourceKind === "image" || !pdfText ? await storageGetSignedUrl(stored.key) : "";
         const models = await listLLMModels();
         const model = models.data.find(item => item.id.startsWith("gemini-3-flash"))?.id ?? models.data.find(item => item.id.startsWith("gpt-5-mini"))?.id;
