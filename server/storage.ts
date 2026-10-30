@@ -3,14 +3,15 @@
 // Downloads return /manus-storage/{key} paths served via 307 redirect.
 
 import { ENV } from "./_core/env";
-import { writeLocalStorageFile } from "./localStorage";
 
 function getForgeConfig() {
   const forgeUrl = ENV.forgeApiUrl;
   const forgeKey = ENV.forgeApiKey;
 
   if (!forgeUrl || !forgeKey) {
-    throw new Error("El almacenamiento Forge requiere BUILT_IN_FORGE_API_URL y BUILT_IN_FORGE_API_KEY configuradas a la vez.");
+    throw new Error(
+      "Storage config missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY",
+    );
   }
 
   return { forgeUrl: forgeUrl.replace(/\/+$/, ""), forgeKey };
@@ -32,16 +33,8 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream",
 ): Promise<{ key: string; url: string }> {
-  const key = appendHashSuffix(normalizeKey(relKey));
-
-  // Plesk/VPS runs outside Manus and has no Forge credentials. Keep files on
-  // persistent local disk there; WebDev continues using its managed S3 bucket.
-  if (!ENV.forgeApiUrl && !ENV.forgeApiKey) {
-    await writeLocalStorageFile(key, data);
-    return { key, url: `/manus-storage/${key}` };
-  }
-
   const { forgeUrl, forgeKey } = getForgeConfig();
+  const key = appendHashSuffix(normalizeKey(relKey));
 
   // 1. Get presigned PUT URL from Forge
   const presignUrl = new URL("v1/storage/presign/put", forgeUrl + "/");
