@@ -4,7 +4,9 @@ import { z } from "zod";
 import { importJobs } from "../../drizzle/schema";
 import { requireDb } from "../db";
 import { extractBuyuyusCalendarDraft } from "../calendarImport";
+import { extractMatchReportDraft } from "../matchReportImport";
 import { invokeLLM, listLLMModels } from "../_core/llm";
+import { ENV } from "../_core/env";
 import { extractPdfText } from "../pdfText";
 import { storageGetSignedUrl, storagePut } from "../storage";
 import { adminProcedure, router } from "../_core/trpc";
@@ -49,6 +51,20 @@ const matchReportExtractionSchema = {
       required: ["opponent", "ownScore", "opponentScore"],
       additionalProperties: false,
     },
+    matchDetails: {
+      type: "object",
+      properties: {
+        date: { type: ["string", "null"] },
+        time: { type: ["string", "null"] },
+        venue: { type: ["string", "null"] },
+        phase: { type: ["string", "null"] },
+        district: { type: ["string", "null"] },
+        group: { type: ["string", "null"] },
+        journey: { type: ["string", "null"] },
+      },
+      required: ["date", "time", "venue", "phase", "district", "group", "journey"],
+      additionalProperties: false,
+    },
     playerStats: {
       type: "array",
       items: {
@@ -68,11 +84,11 @@ const matchReportExtractionSchema = {
     },
     warnings: { type: "array", items: { type: "string" } },
   },
-  required: ["documentSummary", "match", "playerStats", "warnings"],
+  required: ["documentSummary", "match", "matchDetails", "playerStats", "warnings"],
   additionalProperties: false,
 } as const;
 
-export const matchReportExtractionInstructions = "Analiza este acta de baloncesto. Extrae solo el rival, marcador de Buyuyus, marcador rival y, por cada jugador realmente identificable, participación, faltas, técnicas y antideportivas. Regla oficial de Buyuyus: todo jugador que figure en la lista del acta cuenta como participante, aunque no tenga una marca de entrada visible. Interpreta P como falta personal, T como falta técnica y U como falta antideportiva. Cuenta solo marcas realmente visibles; si una marca, nombre o cifra no es legible, usa 0 para ese campo e inclúyelo en warnings en vez de inventarlo. El resultado será un borrador para que administración lo asocie al partido y lo confirme.";
+export const matchReportExtractionInstructions = "Analiza este acta de baloncesto. Extrae rival, marcadores, fecha, hora, terreno/pabellón, fase, distrito, grupo y jornada cuando aparezcan, y por cada jugador de Buyuyus realmente identificable participación, dorsal, faltas, técnicas y antideportivas. Regla oficial de Buyuyus: todo jugador que figure en la lista del acta cuenta como participante, aunque no tenga una marca de entrada visible. Interpreta P como falta personal, T como falta técnica y U como falta antideportiva. Cuenta solo marcas realmente visibles; si una marca, nombre o cifra no es legible, usa 0 para ese campo e inclúyelo en warnings en vez de inventarlo. El resultado será un borrador para que administración lo asocie al partido y lo confirme.";
 
 function safeFilename(filename: string) {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 150) || "document";
@@ -86,6 +102,9 @@ function safeExtractionError(error: unknown) {
 export function buildDocumentExtractionPrompt(type: z.infer<typeof importType>) {
   if (type === "calendar") {
     return "Analiza este calendario deportivo. Si contiene una programación de liga, extrae una fila por cada partido de C.B. BUYUYUS, y no los partidos de otros equipos. En summary escribe rival y localía; en rawFields incluye fecha completa (dd-mm-aaaa), hora, pabellón/terreno de juego y jornada si aparece o puede identificarse, exactamente como figuren. No inventes hora o lugar. Si el documento no es un calendario de partidos, extrae los eventos deportivos relevantes. Añade warnings si faltan datos o la lectura del PDF no permite reconstruir todos los partidos. La respuesta es solo un borrador de revisión: no se crean registros automáticamente.";
+  }
+  if (type === "standing") {
+    return "Analiza esta captura o documento de resultados/clasificación de baloncesto y extrae una fila por cada equipo visible. En summary indica equipo y posición; en rawFields copia todos los campos legibles (PJ, PG, PE/empates si aparecen, PP, puntos a favor, puntos en contra, diferencia, puntos de clasificación y fecha/jornada de corte). Si aparecen resultados de partidos, crea una fila por partido con ambos equipos, marcador y fecha. No inventes datos ni completes filas cortadas. Añade warnings para texto borroso, columnas ilegibles o filas incompletas. Esto es una propuesta para revisión administrativa: no actualices clasificación ni resultados automáticamente.";
   }
   return `Analiza este documento para el destino ${type}. Extrae los posibles eventos, partidos, filas de clasificación o movimientos financieros. No guardes nada automáticamente: la respuesta será un borrador de revisión.`;
 }
@@ -153,12 +172,25 @@ export const importRouter = router({
         return { id, fileUrl: stored.url, status: "ready_for_review" as const, result: deterministicCalendarDraft };
       }
 
-      // On the VPS, text-based calendar PDFs should not silently depend on an
-      // OpenAI key when local parsing cannot recognize the source layout.
-      if (input.type === "calendar" && input.sourceKind === "pdf" && !process.env.OPENAI_API_KEY) {
-        const message = pdfText
-          ? "El PDF contiene texto, pero no se reconocieron sus filas de equipos y partidos Buyuyus. No se ha llamado a IA; revisa que sea un calendario de liga con la cabecera de equipos y las jornadas visibles."
-          : "No se pudo extraer texto seleccionable del PDF. Puede ser un documento escaneado; vuelve a exportarlo con texto seleccionable o sube una imagen legible. No se ha llamado a IA.";
+      const deterministicMatchReportDraft = input.type === "match_report" && pdfText ? extractMatchReportDraft(pdfText) : null;
+      if (deterministicMatchReportDraft) {
+        await db.update(importJobs).set({ status: "ready_for_review", extractedData: deterministicMatchReportDraft, extractionNote: deterministicMatchReportDraft.documentSummary, updatedAt: new Date() }).where(eq(importJobs.id, id));
+        return { id, fileUrl: stored.url, status: "ready_for_review" as const, result: deterministicMatchReportDraft };
+      }
+
+      // Recognized text PDFs are handled locally. Every other image/document
+      // requires the project LLM, and images/scans also require Forge storage
+      // URLs to be reachable by the vision model.
+      const needsVisualUrl = input.sourceKind === "image" || !pdfText;
+      if (!ENV.forgeApiKey || (needsVisualUrl && !ENV.forgeApiUrl)) {
+        const configRequired = needsVisualUrl
+          ? "Para analizar capturas e imágenes en este VPS, configura BUILT_IN_FORGE_API_URL y BUILT_IN_FORGE_API_KEY como variables de entorno del sistema Node.js."
+          : "Para analizar este documento con IA, configura BUILT_IN_FORGE_API_KEY como variable de entorno del sistema Node.js.";
+        const message = input.sourceKind === "pdf" && !pdfText
+          ? `No se pudo extraer texto seleccionable del PDF; puede ser un documento escaneado. ${configRequired}`
+          : input.sourceKind === "pdf"
+            ? `El PDF contiene texto, pero no se reconoció un formato que pueda procesarse localmente. ${configRequired}`
+            : configRequired;
         await db.update(importJobs).set({ status: "failed", extractionNote: message, updatedAt: new Date() }).where(eq(importJobs.id, id));
         throw new TRPCError({ code: "BAD_REQUEST", message: `El documento se guardó, pero ${message}` });
       }
