@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildEventValues, buildWeeklyTrainingRows, calculatePlayerSeasonStats, calculateStandings, calculateTeamSeasonStatistics, resolveTrainingDeletion, selectNextActivities, summarizeAttendance } from "./sports";
+import { buildEventValues, buildWeeklyTrainingRows, calculatePlayerSeasonStats, calculateStandings, calculateTeamSeasonStatistics, hasAppliedOfficialSnapshot, resolveTrainingDeletion, selectNextActivities, summarizeAttendance } from "./sports";
 
 describe("calculateStandings", () => {
   it("calcula puntos, diferencia y posición a partir de resultados confirmados", () => {
@@ -73,5 +73,16 @@ describe("entrenamientos recurrentes", () => {
     expect(resolveTrainingDeletion("single", event)).toEqual({ kind: "single", eventId: 9 });
     expect(resolveTrainingDeletion("from_here", event)).toEqual({ kind: "from_here", seriesId: "serie-9", startsAt: event.startsAt });
     expect(resolveTrainingDeletion("all_series", event)).toEqual({ kind: "all_series", seriesId: "serie-9" });
+  });
+});
+
+describe("clasificación oficial importada", () => {
+  it("distingue un snapshot aprobado para una competición y descarta otros borradores", () => {
+    expect(hasAppliedOfficialSnapshot([
+      { extractedData: { appliedCompetitionId: 4 } },
+      { extractedData: { documentSummary: "Sin aplicar" } },
+      { extractedData: null },
+    ], 4)).toBe(true);
+    expect(hasAppliedOfficialSnapshot([{ extractedData: { appliedCompetitionId: 5 } }], 4)).toBe(false);
   });
 });

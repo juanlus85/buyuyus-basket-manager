@@ -18,12 +18,7 @@ En Plesk, cree el subdominio `buyuyus.blancoguzman.es` y active un certificado T
 
 ## 2. Copiar el proyecto y configurar el entorno
 
-Desde el directorio de la aplicación en el VPS, copie el código fuente y cree el archivo `.env` a partir de `.env.production.example`. Configure `DATABASE_URL` y `JWT_SECRET`; las claves de almacenamiento Forge no son necesarias en Plesk.
-
-```bash
-cp .env.production.example .env
-chmod 600 .env
-```
+Desde el directorio de la aplicación en el VPS, copie el código fuente y configure `DATABASE_URL` y `JWT_SECRET` como **variables de entorno del sistema/proceso Node.js en Plesk**. No es necesario crear un archivo `.env`. Las claves de almacenamiento Forge no son necesarias para guardar archivos en disco local ni para leer actas IMD y calendarios PDF reconocidos con texto seleccionable.
 
 El valor de `JWT_SECRET` debe generarse de forma aleatoria y mantenerse privado. Para la conexión MySQL, emplee una URL con el formato `mysql://usuario:contraseña@127.0.0.1:3306/buyuyus_basket`.
 
@@ -69,7 +64,7 @@ El comando equivalente si se gestiona el proceso por SSH es el siguiente:
 NODE_ENV=production pnpm start
 ```
 
-Después de reiniciar la aplicación desde Plesk, compruebe que `https://buyuyus.blancoguzman.es` responde y que la redirección de OAuth usa exactamente ese dominio HTTPS como URL autorizada.
+Después de reiniciar la aplicación desde Plesk, compruebe que `https://buyuyus.blancoguzman.es` responde y que funciona el acceso con usuario y contraseña local. El equipo no necesita iniciar sesión con una cuenta Manus.
 
 ## 5. Operación y copias de seguridad
 
@@ -78,7 +73,7 @@ La base de datos contiene información de equipo y movimientos económicos. Prog
 | Elemento | Qué conservar |
 |---|---|
 | MySQL | Copia diaria y prueba periódica de restauración |
-| `.env` | Copia cifrada y fuera del repositorio |
+| Variables de entorno de Plesk | Copia cifrada de la configuración, fuera del repositorio |
 | Almacenamiento de archivos | El directorio `storage/uploads/` o la ruta `FILE_STORAGE_DIR` configurada en Plesk |
 | Código | Repositorio privado o archivo de versión firmado |
 
@@ -105,3 +100,25 @@ El archivo `historical_import_template.tsv` define la plantilla validable para i
 Para abrir un nuevo curso, utilice **Cuentas → Cerrar temporada**. La operación archiva el contexto de la temporada activa, abre la nueva sin cargos ni pagos heredados y conserva los saldos de las cajas. Revise la vista previa de cargos abiertos y cajas antes de confirmar.
 
 Los entrenamientos se programan desde **Entrenamientos** y se sincronizan automáticamente con **Calendario** y el resumen. Cada actividad puede incluir lugar, fecha, hora y hora de convocatoria. Los jugadores pueden responder *Voy*, *Quizá* o *No voy*; el recuento queda visible para el equipo.
+
+## 8. Actas y capturas semanales: importación revisable
+
+En **Importación**, selecciona **Acta del partido** y sube el PDF. Las actas IMD con texto reconocible se procesan localmente: rival, marcadores, fecha, hora, pista, fase, distrito, grupo, jornada y jugadores de Buyuyus con faltas P/T/U. No necesitan claves de IA. Los jugadores listados cuentan como participantes, aunque no tengan una marca de entrada.
+
+La subida conserva el documento y crea un borrador. En el historial puedes **Abrir borrador** después de recargar la página y **Ver documento original**. Un error de extracción no equivale a una subida física fallida: si el servidor indica que el documento se guardó, el archivo sigue disponible desde el historial.
+
+Antes de confirmar, selecciona el partido y su temporada, verifica ambos marcadores y vincula cada fila a su ficha. Se propone únicamente una coincidencia inequívoca por nombre completo; **no se asignan estadísticas por dorsal**, porque puede cambiar entre partidos. Una fila desconocida bloquea la confirmación hasta identificarla o excluirla explícitamente. Si necesitas un jugador nuevo, crea su ficha en Plantilla y vuelve al borrador. El botón **Confirmar acta y actualizar estadísticas** aplica el marcador, las participaciones, las faltas y la aprobación del borrador en una misma transacción. Reimportar y confirmar una corrección reemplaza las estadísticas de ese partido; no las suma una segunda vez. Aplicar un acta no reconstruye la tabla de liga a partir de partidos de Buyuyus, por lo que no borra la clasificación oficial capturada semanalmente.
+
+Para capturas semanales, selecciona **Clasificación y resultados**. Incluye cabeceras y tablas completas en una imagen legible. El análisis visual en VPS necesita que el administrador configure en Plesk, como variables del sistema/proceso Node.js, una `OPENAI_API_KEY` propia y una `OPENAI_MODEL` que esté habilitada en esa cuenta y admita visión y respuesta estructurada JSON Schema. La aplicación verifica que el identificador del modelo exista en el catálogo de esa cuenta antes de enviar la captura. La API key nunca llega al navegador; OpenAI puede cobrar el análisis según su cuenta y modelo. No copies claves internas de Manus ni configures las credenciales Forge de WebDev en Plesk: Forge también cambiaría la ruta de almacenamiento de archivos, que en este VPS debe seguir en disco local. En WebDev se conserva el proveedor Forge existente. Sin credenciales de IA, las actas IMD y calendarios PDF reconocidos se procesan localmente; las capturas muestran un error de configuración y permanecen en el historial sin borrador extraído.
+
+Después de analizar una captura, elige competición/temporada, corrige las cifras ilegibles, marca las filas de clasificación a aplicar y asocia cada resultado elegido a su partido. **Confirmar clasificación y resultados seleccionados** actualiza solo esa selección tras la revisión; no inventa participaciones, faltas ni puntos individuales a partir de una clasificación. Si ya existen estadísticas de un acta para un partido, cambiar su marcador recalcula las victorias y derrotas de esos participantes. Una captura nueva conserva una nueva referencia en el historial y no suma los acumulados de clasificación de la semana anterior.
+
+Esta corrección de importación no cambia el esquema MySQL. Para actualizar desde el código anterior, ejecuta en la raíz del proyecto:
+
+```bash
+git pull --ff-only
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+Reinicia la aplicación Node.js en Plesk y vuelve a probar el acta. No necesitas migración SQL por estos cambios. El archivo generado `client/src/build-info.ts` sigue ignorado por Git para evitar bloqueos recurrentes en `git pull`.

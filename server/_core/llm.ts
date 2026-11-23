@@ -23,6 +23,11 @@ export type FileContent = {
   };
 };
 
+type OpenAiPdfContent = {
+  type: "file";
+  file: { filename: string; file_data: string };
+};
+
 export type MessageContent = string | TextContent | ImageContent | FileContent;
 
 export type Message = {
@@ -117,9 +122,12 @@ const ensureArray = (
   value: MessageContent | MessageContent[]
 ): MessageContent[] => (Array.isArray(value) ? value : [value]);
 
+type LlmProvider = "forge" | "openai";
+
 const normalizeContentPart = (
-  part: MessageContent
-): TextContent | ImageContent | FileContent => {
+  part: MessageContent,
+  provider: LlmProvider
+): TextContent | ImageContent | FileContent | OpenAiPdfContent => {
   if (typeof part === "string") {
     return { type: "text", text: part };
   }
@@ -133,13 +141,23 @@ const normalizeContentPart = (
   }
 
   if (part.type === "file_url") {
+    if (provider === "openai") {
+      const pdf = /^data:application\/pdf;base64,([A-Za-z0-9+/=\s]+)$/i.exec(part.file_url.url);
+      if (part.file_url.mime_type !== "application/pdf" || !pdf) {
+        throw new Error("OpenAI Chat Completions requiere que los PDFs se envíen como data URL PDF en base64.");
+      }
+      return {
+        type: "file",
+        file: { filename: "document.pdf", file_data: part.file_url.url },
+      };
+    }
     return part;
   }
 
   throw new Error("Unsupported message content part");
 };
 
-const normalizeMessage = (message: Message) => {
+const normalizeMessage = (message: Message, provider: LlmProvider) => {
   const { role, name, tool_call_id } = message;
 
   if (role === "tool" || role === "function") {
@@ -155,7 +173,7 @@ const normalizeMessage = (message: Message) => {
     };
   }
 
-  const contentParts = ensureArray(message.content).map(normalizeContentPart);
+  const contentParts = ensureArray(message.content).map(part => normalizeContentPart(part, provider));
 
   // If there's only text content, collapse to a single string for compatibility
   if (contentParts.length === 1 && contentParts[0].type === "text") {
@@ -212,16 +230,22 @@ const normalizeToolChoice = (
   return toolChoice;
 };
 
-const resolveApiUrl = () =>
-  ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
-    ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
-    : "https://forge.manus.im/v1/chat/completions";
-
-const assertApiKey = () => {
-  if (!ENV.forgeApiKey) {
-    throw new Error("BUILT_IN_FORGE_API_KEY is not configured");
-  }
+const resolveProvider = (): LlmProvider => {
+  if (ENV.forgeApiKey) return "forge";
+  if (process.env.OPENAI_API_KEY?.trim()) return "openai";
+  throw new Error("Configura BUILT_IN_FORGE_API_KEY o OPENAI_API_KEY para habilitar la extracción con IA.");
 };
+
+const resolveApiUrl = (provider: LlmProvider, resource: "chat/completions" | "models") => {
+  if (provider === "openai") return `https://api.openai.com/v1/${resource}`;
+  const base = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
+    ? ENV.forgeApiUrl.replace(/\/$/, "")
+    : "https://forge.manus.im";
+  return `${base}/v1/${resource}`;
+};
+
+const resolveApiKey = (provider: LlmProvider) =>
+  provider === "forge" ? ENV.forgeApiKey : process.env.OPENAI_API_KEY?.trim() ?? "";
 
 const normalizeResponseFormat = ({
   responseFormat,
@@ -297,8 +321,17 @@ const computeBackoffDelay = (
   return Math.min(Math.max(jittered, retryAfterMs ?? 0), RETRY_MAX_DELAY_MS);
 };
 
-// Retries non-2xx responses and network errors with exponential backoff, then
-// returns the final Response so callers keep their existing error handling.
+const isRetryableStatus = (status: number) =>
+  status === 408 || status === 409 || status === 429 || status >= 500;
+
+const isPermanentQuotaFailure = async (response: Response) => {
+  if (response.status !== 429) return false;
+  const body = await response.clone().text().catch(() => "");
+  return /insufficient[_ -]?quota|current quota|quota has been exceeded|billing|credit balance|insufficient credits|hard limit/i.test(body);
+};
+
+// Retries transient HTTP/network errors only. Authentication, bad requests,
+// unsupported models and quota/billing failures are returned immediately.
 const fetchWithBackoff = async (
   url: string,
   init: FetchInit
@@ -308,7 +341,7 @@ const fetchWithBackoff = async (
   for (let attempt = 0; attempt <= RETRY_MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(url, init);
-      if (response.ok || attempt === RETRY_MAX_RETRIES) {
+      if (response.ok || attempt === RETRY_MAX_RETRIES || !isRetryableStatus(response.status) || await isPermanentQuotaFailure(response)) {
         return response;
       }
 
@@ -340,7 +373,7 @@ const fetchWithBackoff = async (
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  assertApiKey();
+  const provider = resolveProvider();
 
   const {
     messages,
@@ -359,7 +392,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   } = params;
 
   const payload: Record<string, unknown> = {
-    messages: messages.map(normalizeMessage),
+    messages: messages.map(message => normalizeMessage(message, provider)),
   };
 
   if (model) {
@@ -401,11 +434,11 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.response_format = normalizedResponseFormat;
   }
 
-  const response = await fetchWithBackoff(resolveApiUrl(), {
+  const response = await fetchWithBackoff(resolveApiUrl(provider, "chat/completions"), {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${ENV.forgeApiKey}`,
+      authorization: `Bearer ${resolveApiKey(provider)}`,
     },
     body: JSON.stringify(payload),
   });
@@ -433,14 +466,11 @@ export type ModelsResponse = {
 };
 
 export async function listLLMModels(): Promise<ModelsResponse> {
-  assertApiKey();
-
-  const url = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
-    ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/models`
-    : "https://forge.manus.im/v1/models";
+  const provider = resolveProvider();
+  const url = resolveApiUrl(provider, "models");
 
   const response = await fetchWithBackoff(url, {
-    headers: { authorization: `Bearer ${ENV.forgeApiKey}` },
+    headers: { authorization: `Bearer ${resolveApiKey(provider)}` },
   });
 
   if (!response.ok) {

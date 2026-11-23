@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, asc, desc, eq, gte, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { competitionStandings, competitions, eventAttendances, matches, playerMatchStats, playerProfiles, seasons, teamEvents, users } from "../../drizzle/schema";
+import { competitionStandings, competitions, eventAttendances, importJobs, matches, playerMatchStats, playerProfiles, seasons, teamEvents, users } from "../../drizzle/schema";
 import { requireDb } from "../db";
 import { adminProcedure, protectedProcedure, router } from "../_core/trpc";
 
@@ -143,8 +143,21 @@ export function calculateStandings(games: CompletedGame[]) {
     .map((row, index) => ({ ...row, position: index + 1 }));
 }
 
+export function hasAppliedOfficialSnapshot(rows: Array<{ extractedData: unknown }>, competitionId: number) {
+  return rows.some(({ extractedData }) => {
+    if (!extractedData || typeof extractedData !== "object" || Array.isArray(extractedData)) return false;
+    return (extractedData as Record<string, unknown>).appliedCompetitionId === competitionId;
+  });
+}
+
 async function syncStandings(competitionId: number) {
   const db = await requireDb();
+  const snapshotJobs = await db.select({ extractedData: importJobs.extractedData }).from(importJobs).where(and(
+    eq(importJobs.type, "standing"),
+    eq(importJobs.status, "approved"),
+  ));
+  if (hasAppliedOfficialSnapshot(snapshotJobs, competitionId)) return;
+
   const games = await db
     .select({ opponent: matches.opponent, ownScore: matches.ownScore, opponentScore: matches.opponentScore })
     .from(matches)
@@ -293,10 +306,35 @@ export const sportRouter = router({
     if (!match) throw new TRPCError({ code: "NOT_FOUND", message: "No se ha encontrado el partido." });
     const knownPlayers = await db.select({ id: playerProfiles.id }).from(playerProfiles).where(inArray(playerProfiles.id, input.playerStats.map(item => item.playerId)));
     if (knownPlayers.length !== input.playerStats.length) throw new TRPCError({ code: "BAD_REQUEST", message: "El acta contiene un jugador no reconocido." });
-    await db.update(matches).set({ ownScore: input.ownScore, opponentScore: input.opponentScore, notes: input.notes ?? null, status: "completed", updatedAt: new Date() }).where(eq(matches.id, input.matchId));
-    await db.delete(playerMatchStats).where(eq(playerMatchStats.matchId, input.matchId));
-    await db.insert(playerMatchStats).values(input.playerStats.map(stat => ({ ...stat, matchId: input.matchId, sourceImportId: input.sourceImportId ?? null, confirmedByUserId: ctx.user.id })));
-    if (match.competitionId) await syncStandings(match.competitionId);
+    await db.transaction(async tx => {
+      let sourceJob: typeof importJobs.$inferSelect | undefined;
+      if (input.sourceImportId) {
+        [sourceJob] = await tx.select().from(importJobs).where(eq(importJobs.id, input.sourceImportId)).limit(1);
+        if (!sourceJob || sourceJob.type !== "match_report" || sourceJob.status !== "ready_for_review") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "El acta debe ser un borrador pendiente de revisión." });
+        }
+      }
+
+      const now = new Date();
+      await tx.update(matches).set({ ownScore: input.ownScore, opponentScore: input.opponentScore, notes: input.notes ?? null, status: "completed", updatedAt: now }).where(eq(matches.id, input.matchId));
+      await tx.delete(playerMatchStats).where(eq(playerMatchStats.matchId, input.matchId));
+      await tx.insert(playerMatchStats).values(input.playerStats.map(stat => ({ ...stat, matchId: input.matchId, sourceImportId: input.sourceImportId ?? null, confirmedByUserId: ctx.user.id })));
+      if (sourceJob) {
+        const previousData = sourceJob.extractedData && typeof sourceJob.extractedData === "object" && !Array.isArray(sourceJob.extractedData)
+          ? sourceJob.extractedData as Record<string, unknown>
+          : {};
+        await tx.update(importJobs).set({
+          status: "approved",
+          extractedData: { ...previousData, appliedSelection: { matchId: input.matchId, ownScore: input.ownScore, opponentScore: input.opponentScore, playerStats: input.playerStats } },
+          extractionNote: input.notes ?? sourceJob.extractionNote,
+          reviewedByUserId: ctx.user.id,
+          reviewedAt: now,
+          updatedAt: now,
+        }).where(eq(importJobs.id, input.sourceImportId!));
+      }
+      // A match report only contains the Buyuyus roster and score. Rebuilding a
+      // league table from those rows would erase official weekly snapshots.
+    });
     return { success: true, playersUpdated: input.playerStats.length };
   }),
 

@@ -217,3 +217,9 @@
 - [ ] Detectar automáticamente el equipo Buyuyus, la competición y el grupo de cada temporada antes de consultar datos.
 - [x] Corregir la importación de calendarios PDF con texto seleccionable mediante parser local: filtra las 18 jornadas, conserva el listado de equipos para identificar rivales y muestra un diagnóstico local si el formato no se reconoce, sin exigir OPENAI_API_KEY en el VPS.
 - [x] Eliminar la dependencia obligatoria de BUILT_IN_FORGE_API_URL y BUILT_IN_FORGE_API_KEY en Plesk: guardar archivos en disco local y exigir autenticación y permisos para descargarlos.
+- [x] Extraer actas IMD reconocidas localmente a un borrador con resultado, metadatos, jugadores y faltas P/T/U, sin aplicar estadísticas durante la subida.
+- [x] Añadir revisión editable de actas, asociación segura de fichas por nombre, bloqueo de filas sin identificar y confirmación administrativa atómica de marcador, estadísticas y estado del borrador.
+- [x] Añadir importación de capturas semanales como borrador revisable, con selección explícita de filas de clasificación y resultados asociados a la competición correcta.
+- [x] Mantener capturas oficiales de clasificación al confirmar actas y aplicar snapshots semanales sin crear participaciones ni faltas de jugadores.
+- [x] Añadir proveedor OpenAI configurable en el servidor VPS mediante OPENAI_API_KEY y OPENAI_MODEL, con imágenes y PDFs inline; conservar Forge en WebDev y el almacenamiento local del VPS.
+- [x] Probar parser IMD para ambos lados, listas sin faltas, metadatos separados y marcador ausente, además de las rutas y formularios de revisión.

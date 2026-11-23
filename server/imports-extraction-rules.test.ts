@@ -50,6 +50,47 @@ describe("reglas de extracción de actas", () => {
     expect(buyuyusPlayers.reduce((total, player) => total + player.unsportsmanlikeFouls, 0)).toBe(1);
   });
 
+  it("normaliza el marcador cuando Buyuyus figura como Equipo A", () => {
+    const sideAReport = `Fecha 06/11/2026 Hora 20:00 Terreno PISTA DE PRUEBA Fase LIGA Distrito CENTRO Grupo 1ªA-01 Jornada 2
+Equipo A C.B. BUYUYUS
+444D JUGADORA DE PRUEBA UNO 8 P T 16
+555E JUGADORA DE PRUEBA DOS 22 U 17
+Periodo Faltas Tiempos
+Equipo B CLUB RIVAL DE PRUEBA
+111A JUGADORA RIVAL UNO 4 P 10
+Periodo Faltas Tiempos
+RESULTADO FINAL
+Equipo A Equipo B
+35 24`;
+    const result = extractMatchReportDraft(sideAReport);
+
+    expect(result?.match).toEqual({ opponent: "CLUB RIVAL DE PRUEBA", ownScore: 35, opponentScore: 24 });
+    expect(result?.playerStats).toEqual([
+      expect.objectContaining({ playerName: "JUGADORA DE PRUEBA UNO", played: true, fouls: 1, technicalFouls: 1, unsportsmanlikeFouls: 0 }),
+      expect.objectContaining({ playerName: "JUGADORA DE PRUEBA DOS", played: true, fouls: 0, technicalFouls: 0, unsportsmanlikeFouls: 1 }),
+    ]);
+  });
+
+  it("incluye como participante al jugador listado sin marcas P/T/U", () => {
+    const reportWithNoFouls = sampleMatchReport.replace(
+      "555E JUGADOR DE MUESTRA CINCO 22 P P 21",
+      "555E JUGADOR DE MUESTRA CINCO 22 P P 21\n666F JUGADOR DE MUESTRA SEIS 9 0",
+    );
+    const result = extractMatchReportDraft(reportWithNoFouls);
+
+    expect(result?.playerStats).toContainEqual(expect.objectContaining({ playerName: "JUGADOR DE MUESTRA SEIS", jerseyNumber: 9, played: true, fouls: 0, technicalFouls: 0, unsportsmanlikeFouls: 0 }));
+  });
+
+  it("extrae metadatos aunque estén separados en líneas y se niega a inventar un marcador ausente", () => {
+    const reportWithoutFinalScore = sampleMatchReport
+      .replace("Fecha 06/11/2026 Hora 20:00 Terreno PABELLON MUNICIPAL MEDAC Fase 1ª FASE DE DISTRITO Grupo 1ªA-01 Jornada 1", "Fecha 06/11/2026\nHora 20:00\nTerreno PABELLON MUNICIPAL MEDAC\nFase 1ª FASE DE DISTRITO\nGrupo 1ªA-01\nJornada 1")
+      .replace("35 24", "Marcador no visible");
+
+    expect(extractMatchReportDraft(reportWithoutFinalScore)).toBeNull();
+    const withScore = extractMatchReportDraft(reportWithoutFinalScore.replace("Marcador no visible", "35 24"));
+    expect(withScore?.matchDetails).toMatchObject({ date: "06/11/2026", time: "20:00", venue: "PABELLON MUNICIPAL MEDAC", journey: "1" });
+  });
+
   it("no inventa una extracción local para un formato que no parece un acta IMD", () => {
     expect(extractMatchReportDraft("Documento sin alineaciones ni resultado")).toBeNull();
   });

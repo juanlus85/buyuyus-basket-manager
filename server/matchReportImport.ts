@@ -116,8 +116,8 @@ export function extractMatchReportDraft(text: string): MatchReportImportDraft | 
   const venue = textField(lines, "Terreno", ["Fase", "Grupo", "Jornada", "Fecha", "Hora"]);
   const phaseLine = lines.find(line => /\bFase\b/i.test(line));
   const phaseMatch = phaseLine?.match(/\bFase\s+(.+?)\s+Distrito\b/i);
-  const phase = phaseMatch ? `${phaseMatch[1].trim()} DISTRITO` : textField(lines, "Fase", ["Grupo", "Jornada", "Fecha", "Hora", "Terreno"]);
-  const district = textField(lines, "Distrito", ["Fecha", "Grupo", "Jornada", "Hora", "Terreno"]);
+  const phase = phaseMatch ? `${phaseMatch[1].trim()}${/\bDE$/i.test(phaseMatch[1].trim()) ? " DISTRITO" : ""}` : textField(lines, "Fase", ["Grupo", "Jornada", "Fecha", "Hora", "Terreno"]);
+  const district = textField(lines, "Distrito", ["Fecha", "Grupo", "Jornada", "Hora", "Terreno"])?.replace(/^Distrito\s+/i, "") ?? null;
   const group = text.match(/\bGrupo\s+([\wª-]+)/i)?.[1] ?? null;
   const journey = text.match(/\bJornada\s+(\d+)/i)?.[1] ?? null;
 
